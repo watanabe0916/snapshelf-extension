@@ -28,6 +28,10 @@ const selectionState = {
     overlayElement: null,
 };
 
+const keyboardState = {
+    isSelectionKeyPressed: false,
+};
+
 const uiState = {
     hostElement: null,
     shadowRoot: null,
@@ -820,7 +824,7 @@ function renderActiveGroupState(panelBody, model) {
     if (screenshots.length === 0) {
         const emptyText = document.createElement('p');
         emptyText.className = 'empty';
-        emptyText.textContent = 'このグループにはまだ画像がありません。Ctrl + 左ドラッグで保存できます。';
+        emptyText.textContent = 'このグループにはまだ画像がありません。Sキーを押しながら左ドラッグで保存できます。';
         screenshotsSection.appendChild(emptyText);
     } else {
         const grid = document.createElement('div');
@@ -1058,6 +1062,37 @@ function createSelectionOverlay() {
     return overlay;
 }
 
+function isEditableTarget(target) {
+    return (
+        target instanceof HTMLElement &&
+        (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
+    );
+}
+
+function isSelectionShortcutKey(event) {
+    return typeof event.key === 'string' && event.key.toLowerCase() === 's';
+}
+
+function handleKeyDown(event) {
+    if (isEditableTarget(event.target)) {
+        return;
+    }
+
+    if (isSelectionShortcutKey(event)) {
+        keyboardState.isSelectionKeyPressed = true;
+    }
+}
+
+function handleKeyUp(event) {
+    if (isSelectionShortcutKey(event)) {
+        keyboardState.isSelectionKeyPressed = false;
+    }
+}
+
+function resetSelectionShortcutState() {
+    keyboardState.isSelectionKeyPressed = false;
+}
+
 function getRectFromPoints(startX, startY, currentX, currentY) {
     const x = Math.min(startX, currentX);
     const y = Math.min(startY, currentY);
@@ -1132,7 +1167,7 @@ function sendSelectionToBackground(rect) {
 }
 
 function handleMouseDown(event) {
-    if (event.button !== 0 || !event.ctrlKey || selectionState.isSelecting) {
+    if (event.button !== 0 || !keyboardState.isSelectionKeyPressed || selectionState.isSelecting) {
         return;
     }
 
@@ -1185,11 +1220,15 @@ function blockNativeSelectionWhileDragging(event) {
 }
 
 function handleWindowBlur() {
+    resetSelectionShortcutState();
+
     if (selectionState.isSelecting) {
         endSelection();
     }
 }
 
+document.addEventListener('keydown', handleKeyDown, true);
+document.addEventListener('keyup', handleKeyUp, true);
 document.addEventListener('mousedown', handleMouseDown, true);
 document.addEventListener('mousemove', handleMouseMove, true);
 document.addEventListener('mouseup', handleMouseUp, true);
@@ -1197,6 +1236,7 @@ document.addEventListener('dragstart', blockNativeSelectionWhileDragging, true);
 document.addEventListener('selectstart', blockNativeSelectionWhileDragging, true);
 window.addEventListener('blur', handleWindowBlur, true);
 window.addEventListener('beforeunload', () => {
+    resetSelectionShortcutState();
     closeLightbox();
     revokeAllObjectUrls();
 });
