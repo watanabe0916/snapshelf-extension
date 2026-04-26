@@ -1,0 +1,29 @@
+{
+    "manifest_version": 3,
+    "name": "SnapShelf",
+    "version": "0.1.0",
+    "description": "Save cropped screenshots and page URLs into named groups.",
+    "permissions": [
+        "activeTab",
+        "storage",
+        "scripting",
+        "unlimitedStorage"
+    ],
+    "action": {
+        "default_title": "SnapShelf"
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "run_at": "document_idle"
+        }
+    ]
+}
