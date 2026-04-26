@@ -9,6 +9,10 @@ const MESSAGE_TYPES = {
     DELETE_SCREENSHOT: 'SNAPSHELF_DELETE_SCREENSHOT',
 };
 
+const EVENT_TYPES = {
+    SCREENSHOT_SAVED: 'SNAPSHELF_SCREENSHOT_SAVED',
+};
+
 const STORAGE_KEYS = {
     IS_UI_OPEN: 'isUiOpen',
     UI_POSITION: 'uiPosition',
@@ -1058,6 +1062,26 @@ function handleStorageChanged(changes, areaName) {
     }
 }
 
+function handleRuntimeMessage(message) {
+    if (!message || message.type !== EVENT_TYPES.SCREENSHOT_SAVED) {
+        return;
+    }
+
+    if (!uiState.isUiOpen) {
+        return;
+    }
+
+    if (
+        message.groupId &&
+        uiState.model?.activeGroupId &&
+        message.groupId !== uiState.model.activeGroupId
+    ) {
+        return;
+    }
+
+    void refreshAndRenderUi();
+}
+
 async function initializeUiState() {
     try {
         const values = await getLocalStorage([STORAGE_KEYS.IS_UI_OPEN, STORAGE_KEYS.UI_POSITION]);
@@ -1268,4 +1292,5 @@ window.addEventListener('beforeunload', () => {
 });
 
 chrome.storage.onChanged.addListener(handleStorageChanged);
+chrome.runtime.onMessage.addListener(handleRuntimeMessage);
 void initializeUiState();

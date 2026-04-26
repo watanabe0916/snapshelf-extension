@@ -18,6 +18,10 @@ const MESSAGE_TYPES = {
     DELETE_SCREENSHOT: 'SNAPSHELF_DELETE_SCREENSHOT',
 };
 
+const EVENT_TYPES = {
+    SCREENSHOT_SAVED: 'SNAPSHELF_SCREENSHOT_SAVED',
+};
+
 const HANDLED_MESSAGE_TYPES = new Set(Object.values(MESSAGE_TYPES));
 
 const FALLBACK_GROUP_NAME = 'Untitled Group';
@@ -43,6 +47,20 @@ function setStorage(items) {
                 return;
             }
 
+            resolve();
+        });
+    });
+}
+
+function sendMessageToTab(tabId, message) {
+    return new Promise((resolve) => {
+        if (!Number.isInteger(tabId)) {
+            resolve();
+            return;
+        }
+
+        chrome.tabs.sendMessage(tabId, message, () => {
+            // Ignore cases where the tab has no active content script listener.
             resolve();
         });
     });
@@ -253,6 +271,11 @@ async function persistCapturedSelection(payload, sender) {
         imageBlob,
         pageUrl,
         timestamp: Date.now(),
+    });
+
+    void sendMessageToTab(sender?.tab?.id, {
+        type: EVENT_TYPES.SCREENSHOT_SAVED,
+        groupId: activeGroupId,
     });
 
     return { saved: true };
