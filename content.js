@@ -63,6 +63,19 @@ function getLocalStorage(keys) {
     });
 }
 
+function setLocalStorage(items) {
+    return new Promise((resolve, reject) => {
+        chrome.storage.local.set(items, () => {
+            if (chrome.runtime.lastError) {
+                reject(new Error(chrome.runtime.lastError.message));
+                return;
+            }
+
+            resolve();
+        });
+    });
+}
+
 function sendRuntimeMessage(type, payload = {}) {
     return new Promise((resolve, reject) => {
         chrome.runtime.sendMessage(
@@ -236,6 +249,40 @@ function ensureUiHost() {
 			border-radius: 999px;
             padding: 1px 6px;
 		}
+
+        .panel-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .panel-close {
+            width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.75);
+            background: rgba(15, 23, 42, 0.76);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1;
+            padding: 0;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+        }
+
+        .panel-close:hover {
+            transform: translateY(-1px);
+            background: rgba(194, 65, 12, 0.95);
+            box-shadow: 0 8px 16px rgba(194, 65, 12, 0.22);
+        }
+
+        .panel-close:focus-visible {
+            outline: 2px solid rgba(15, 118, 110, 0.35);
+            outline-offset: 1px;
+        }
 
 		.panel-body {
             padding: 8px;
@@ -1053,12 +1100,23 @@ function renderUiPanel() {
     title.className = 'panel-title';
     title.textContent = i18nMessage('extName');
 
+    const headerActions = document.createElement('div');
+    headerActions.className = 'panel-header-actions';
+
     const positionLabel = document.createElement('span');
     positionLabel.className = 'panel-pos';
     positionLabel.textContent =
         uiState.uiPosition === 'top' ? i18nMessage('uiDockedTop') : i18nMessage('uiDockedBottom');
 
-    header.append(title, positionLabel);
+    const closePanelButton = createButton('×', 'panel-close', () => {
+        void setLocalStorage({ [STORAGE_KEYS.IS_UI_OPEN]: false });
+    });
+    closePanelButton.title = i18nMessage('uiButtonClose');
+    closePanelButton.setAttribute('aria-label', i18nMessage('uiButtonClose'));
+
+    headerActions.append(positionLabel, closePanelButton);
+
+    header.append(title, headerActions);
     panel.appendChild(header);
 
     const body = document.createElement('div');
