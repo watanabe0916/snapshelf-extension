@@ -221,7 +221,7 @@ function ensureUiHost() {
 			backdrop-filter: blur(4px);
 			display: flex;
 			flex-direction: column;
-            max-height: min(34vh, 300px);
+            max-height: min(30vh, 250px);
 			overflow: hidden;
 		}
 
@@ -229,34 +229,34 @@ function ensureUiHost() {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-            padding: 7px 10px;
+            padding: 3px 8px;
 			border-bottom: 1px solid var(--line);
 			background: linear-gradient(90deg, rgba(255, 255, 255, 0.55) 0%, rgba(239, 246, 255, 0.72) 100%);
-            font-size: 13px;
+            font-size: 12px;
 			font-weight: 700;
 			letter-spacing: 0.02em;
 		}
 
         .panel-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
-            line-height: 1.2;
+            line-height: 1.1;
         }
 
 		.panel-pos {
-            font-size: 10px;
+            font-size: 9px;
 			color: var(--muted);
 			font-weight: 600;
 			background: rgba(255, 255, 255, 0.85);
 			border: 1px solid var(--line);
 			border-radius: 999px;
-            padding: 1px 6px;
+            padding: 1px 5px;
 		}
 
         .panel-header-actions {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 3px;
         }
 
         .panel-close {
@@ -288,22 +288,22 @@ function ensureUiHost() {
         }
 
 		.panel-body {
-            padding: 8px;
+            padding: 3px;
 			overflow: auto;
 			display: grid;
-            gap: 8px;
+            gap: 3px;
 		}
 
 		.section {
 			border: 1px solid var(--line);
             border-radius: 10px;
-            padding: 8px;
+            padding: 3px;
 			background: var(--card);
 		}
 
 		.section-title {
-            margin: 0 0 6px;
-            font-size: 12px;
+            margin: 0 0 2px;
+            font-size: 11px;
 			color: var(--muted);
 			font-weight: 700;
 			letter-spacing: 0.01em;
@@ -312,7 +312,7 @@ function ensureUiHost() {
 		.inline-row {
 			display: flex;
 			align-items: center;
-            gap: 6px;
+            gap: 3px;
 			flex-wrap: wrap;
 		}
 
@@ -325,7 +325,7 @@ function ensureUiHost() {
         .active-group-meta {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 3px;
             min-width: 0;
             flex: 1;
             overflow: hidden;
@@ -333,7 +333,7 @@ function ensureUiHost() {
 
         .active-group-actions {
             display: flex;
-            gap: 6px;
+            gap: 3px;
             flex-wrap: wrap;
             justify-content: flex-end;
         }
@@ -344,8 +344,8 @@ function ensureUiHost() {
 			flex: 1;
 			border: 1px solid #cdd8e9;
 			border-radius: 9px;
-            padding: 7px 9px;
-            font-size: 12px;
+            padding: 3px 7px;
+            font-size: 11px;
 			color: var(--ink);
 			background: rgba(255, 255, 255, 0.92);
 		}
@@ -360,8 +360,8 @@ function ensureUiHost() {
 		.btn {
 			border: 1px solid transparent;
 			border-radius: 9px;
-            padding: 6px 9px;
-            font-size: 11px;
+            padding: 3px 7px;
+            font-size: 10px;
 			font-weight: 700;
 			cursor: pointer;
 			transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
@@ -398,16 +398,16 @@ function ensureUiHost() {
 
 		.group-list {
 			display: grid;
-            gap: 6px;
+            gap: 3px;
 		}
 
 		.group-item {
 			border: 1px solid #d5dfef;
 			background: rgba(255, 255, 255, 0.9);
 			border-radius: 10px;
-            padding: 7px;
+            padding: 3px;
 			display: grid;
-            gap: 6px;
+            gap: 3px;
 			cursor: pointer;
 		}
 
@@ -420,7 +420,7 @@ function ensureUiHost() {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-            gap: 6px;
+            gap: 3px;
 			min-width: 0;
 		}
 
@@ -428,12 +428,12 @@ function ensureUiHost() {
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
-            font-size: 13px;
+            font-size: 12px;
 			font-weight: 700;
 		}
 
 		.count-pill {
-            font-size: 10px;
+            font-size: 9px;
 			border-radius: 999px;
             padding: 1px 7px;
 			background: rgba(15, 118, 110, 0.14);
@@ -445,18 +445,18 @@ function ensureUiHost() {
 
 		.group-controls {
 			display: flex;
-            gap: 5px;
+            gap: 2px;
 			flex-wrap: wrap;
 		}
 
 		.thumb-grid {
 			display: grid;
             grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
-            gap: 8px;
+            gap: 3px;
         }
 
         .thumb-scroll {
-            max-height: 132px;
+            max-height: 110px;
             overflow-y: auto;
             padding-right: 2px;
 		}
@@ -480,8 +480,8 @@ function ensureUiHost() {
 
 		.thumb-meta {
 			display: block;
-            padding: 3px 5px 5px;
-            font-size: 9px;
+            padding: 1px 4px 2px;
+            font-size: 8px;
 			color: #64748b;
 			text-overflow: ellipsis;
 			overflow: hidden;
@@ -511,8 +511,8 @@ function ensureUiHost() {
 
 		.empty {
 			color: var(--muted);
-			font-size: 12px;
-			line-height: 1.5;
+            font-size: 11px;
+            line-height: 1.35;
 			margin: 0;
 		}
 
@@ -521,14 +521,14 @@ function ensureUiHost() {
 			color: #9a3412;
 			background: rgba(255, 237, 213, 0.8);
 			border-radius: 9px;
-			padding: 8px 10px;
-			font-size: 12px;
+            padding: 4px 8px;
+            font-size: 11px;
 			font-weight: 600;
 		}
 
 		.footer-actions {
 			display: flex;
-			gap: 8px;
+            gap: 3px;
 			flex-wrap: wrap;
 			justify-content: flex-end;
 		}
@@ -637,7 +637,7 @@ function ensureUiHost() {
 
 		@media (max-width: 680px) {
 			.panel {
-                max-height: 50vh;
+                max-height: 44vh;
 			}
 
 			.thumb-grid {
@@ -645,7 +645,7 @@ function ensureUiHost() {
 			}
 
             .thumb-scroll {
-                max-height: 114px;
+                max-height: 96px;
             }
 
 			.thumb-item img {
@@ -653,11 +653,11 @@ function ensureUiHost() {
 			}
 
 			.btn {
-                padding: 6px 8px;
+                padding: 3px 7px;
 			}
 
 			.panel-header {
-                padding: 6px 8px;
+                padding: 3px 6px;
             }
 
             .active-group-row {
