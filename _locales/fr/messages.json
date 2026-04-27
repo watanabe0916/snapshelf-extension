@@ -1,0 +1,116 @@
+{
+    "extName": {
+        "message": "ClipShelf"
+    },
+    "extDescription": {
+        "message": "Enregistrez les captures d'écran recadrées et les URL de pages dans des groupes nommés."
+    },
+    "uiCreateNewShelfTitle": {
+        "message": "Créer une nouvelle étagère"
+    },
+    "uiEnterShelfNamePlaceholder": {
+        "message": "Entrez le nom de l'étagère"
+    },
+    "uiButtonCreate": {
+        "message": "Créer"
+    },
+    "uiShelvesTitle": {
+        "message": "Étagères"
+    },
+    "uiNoShelvesYet": {
+        "message": "Pas encore d'étagères. Veuillez en créer une ci-dessus."
+    },
+    "uiButtonSave": {
+        "message": "Enregistrer"
+    },
+    "uiButtonCancel": {
+        "message": "Annuler"
+    },
+    "uiButtonRename": {
+        "message": "Renommer"
+    },
+    "uiButtonDeleteShelf": {
+        "message": "Supprimer cette étagère"
+    },
+    "uiConfirmDeleteShelf": {
+        "message": "Supprimer cette étagère. Les images enregistrées seront également supprimées."
+    },
+    "uiGroupImageCount": {
+        "message": "$COUNT$ images",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            }
+        }
+    },
+    "uiButtonOpenLink": {
+        "message": "Ouvrir le lien"
+    },
+    "uiButtonClose": {
+        "message": "Fermer"
+    },
+    "uiSavedImageAlt": {
+        "message": "Image enregistrée par ClipShelf"
+    },
+    "uiFailedToLoadActiveShelfInfo": {
+        "message": "Échec du chargement des informations de l'étagère active."
+    },
+    "uiButtonStopSaving": {
+        "message": "Arrêter l'enregistrement"
+    },
+    "uiSavedImagesTitle": {
+        "message": "Images enregistrées"
+    },
+    "uiNoImagesInShelf": {
+        "message": "Pas encore d'images dans cette étagère. Maintenez la touche S et faites un glisser gauche pour enregistrer."
+    },
+    "uiSavedImageThumbnailAlt": {
+        "message": "Miniature de l'image enregistrée"
+    },
+    "uiFailedToLoadImageDataAlt": {
+        "message": "Échec du chargement des données de l'image."
+    },
+    "uiDeleteImageTitle": {
+        "message": "Supprimer cette image"
+    },
+    "uiDockedTop": {
+        "message": "Ancré en haut"
+    },
+    "uiDockedBottom": {
+        "message": "Ancré en bas"
+    },
+    "uiLoadingData": {
+        "message": "Chargement des données..."
+    },
+    "uiErrorBackgroundRequestFailed": {
+        "message": "Échec de la requête en arrière-plan."
+    },
+    "uiErrorLoadUiData": {
+        "message": "Échec du chargement des données de l'interface utilisateur."
+    },
+    "uiErrorOperationFailed": {
+        "message": "L'opération a échoué."
+    },
+    "uiStorageWarningCount": {
+        "message": "Avertissement : $COUNT$ images sont enregistrées (seuil : $THRESHOLD$). Pensez à supprimer les anciennes images.",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            },
+            "threshold": {
+                "content": "$2"
+            }
+        }
+    },
+    "uiStorageDangerCount": {
+        "message": "Danger : $COUNT$ images sont enregistrées (seuil : $THRESHOLD$). Supprimez les images inutiles pour éviter les problèmes de stockage et de performances.",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            },
+            "threshold": {
+                "content": "$2"
+            }
+        }
+    }
+}

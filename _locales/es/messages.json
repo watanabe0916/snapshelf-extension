@@ -1,0 +1,116 @@
+{
+    "extName": {
+        "message": "ClipShelf"
+    },
+    "extDescription": {
+        "message": "Guarde capturas de pantalla recortadas y URL de páginas en grupos nombrados."
+    },
+    "uiCreateNewShelfTitle": {
+        "message": "Crear un nuevo estante"
+    },
+    "uiEnterShelfNamePlaceholder": {
+        "message": "Introduzca el nombre del estante"
+    },
+    "uiButtonCreate": {
+        "message": "Crear"
+    },
+    "uiShelvesTitle": {
+        "message": "Estantes"
+    },
+    "uiNoShelvesYet": {
+        "message": "Aún no hay estantes. Por favor, cree uno desde el formulario de arriba."
+    },
+    "uiButtonSave": {
+        "message": "Guardar"
+    },
+    "uiButtonCancel": {
+        "message": "Cancelar"
+    },
+    "uiButtonRename": {
+        "message": "Renombrar"
+    },
+    "uiButtonDeleteShelf": {
+        "message": "Eliminar este estante"
+    },
+    "uiConfirmDeleteShelf": {
+        "message": "Eliminar este estante. Las imágenes guardadas también se eliminarán."
+    },
+    "uiGroupImageCount": {
+        "message": "$COUNT$ imágenes",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            }
+        }
+    },
+    "uiButtonOpenLink": {
+        "message": "Abrir enlace"
+    },
+    "uiButtonClose": {
+        "message": "Cerrar"
+    },
+    "uiSavedImageAlt": {
+        "message": "Imagen guardada de ClipShelf"
+    },
+    "uiFailedToLoadActiveShelfInfo": {
+        "message": "Error al cargar la información del estante activo."
+    },
+    "uiButtonStopSaving": {
+        "message": "Dejar de guardar"
+    },
+    "uiSavedImagesTitle": {
+        "message": "Imágenes guardadas"
+    },
+    "uiNoImagesInShelf": {
+        "message": "Aún no hay imágenes en este estante. Mantenga presionada la tecla S y arrastre con el botón izquierdo para guardar."
+    },
+    "uiSavedImageThumbnailAlt": {
+        "message": "Miniatura de imagen guardada"
+    },
+    "uiFailedToLoadImageDataAlt": {
+        "message": "Error al cargar los datos de la imagen."
+    },
+    "uiDeleteImageTitle": {
+        "message": "Eliminar esta imagen"
+    },
+    "uiDockedTop": {
+        "message": "Acoplado arriba"
+    },
+    "uiDockedBottom": {
+        "message": "Acoplado abajo"
+    },
+    "uiLoadingData": {
+        "message": "Cargando datos..."
+    },
+    "uiErrorBackgroundRequestFailed": {
+        "message": "Error en la solicitud en segundo plano."
+    },
+    "uiErrorLoadUiData": {
+        "message": "Error al cargar los datos de la interfaz de usuario."
+    },
+    "uiErrorOperationFailed": {
+        "message": "Operación fallida."
+    },
+    "uiStorageWarningCount": {
+        "message": "Advertencia: hay $COUNT$ imágenes guardadas (límite: $THRESHOLD$). Considere eliminar imágenes antiguas.",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            },
+            "threshold": {
+                "content": "$2"
+            }
+        }
+    },
+    "uiStorageDangerCount": {
+        "message": "Peligro: hay $COUNT$ imágenes guardadas (límite: $THRESHOLD$). Elimine las imágenes innecesarias para evitar problemas de almacenamiento y rendimiento.",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            },
+            "threshold": {
+                "content": "$2"
+            }
+        }
+    }
+}

@@ -1,0 +1,116 @@
+{
+    "extName": {
+        "message": "ClipShelf"
+    },
+    "extDescription": {
+        "message": "잘라낸 스크린샷과 페이지 URL을 지정된 그룹에 저장합니다."
+    },
+    "uiCreateNewShelfTitle": {
+        "message": "새 선반 만들기"
+    },
+    "uiEnterShelfNamePlaceholder": {
+        "message": "선반 이름 입력"
+    },
+    "uiButtonCreate": {
+        "message": "만들기"
+    },
+    "uiShelvesTitle": {
+        "message": "선반 목록"
+    },
+    "uiNoShelvesYet": {
+        "message": "아직 선반이 없습니다. 위 양식에서 선반을 만들어 주세요."
+    },
+    "uiButtonSave": {
+        "message": "저장"
+    },
+    "uiButtonCancel": {
+        "message": "취소"
+    },
+    "uiButtonRename": {
+        "message": "이름 변경"
+    },
+    "uiButtonDeleteShelf": {
+        "message": "이 선반 삭제"
+    },
+    "uiConfirmDeleteShelf": {
+        "message": "이 선반을 삭제합니다. 저장된 이미지도 함께 삭제됩니다."
+    },
+    "uiGroupImageCount": {
+        "message": "$COUNT$장",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            }
+        }
+    },
+    "uiButtonOpenLink": {
+        "message": "링크 열기"
+    },
+    "uiButtonClose": {
+        "message": "닫기"
+    },
+    "uiSavedImageAlt": {
+        "message": "ClipShelf 저장된 이미지"
+    },
+    "uiFailedToLoadActiveShelfInfo": {
+        "message": "활성 선반 정보를 불러오지 못했습니다."
+    },
+    "uiButtonStopSaving": {
+        "message": "저장 종료"
+    },
+    "uiSavedImagesTitle": {
+        "message": "저장된 이미지"
+    },
+    "uiNoImagesInShelf": {
+        "message": "이 선반에는 아직 이미지가 없습니다. S 키를 누른 상태에서 마우스 왼쪽 버튼을 드래그하여 저장하세요."
+    },
+    "uiSavedImageThumbnailAlt": {
+        "message": "저장된 이미지 썸네일"
+    },
+    "uiFailedToLoadImageDataAlt": {
+        "message": "이미지 데이터를 불러오지 못했습니다."
+    },
+    "uiDeleteImageTitle": {
+        "message": "이 이미지 삭제"
+    },
+    "uiDockedTop": {
+        "message": "상단 고정"
+    },
+    "uiDockedBottom": {
+        "message": "하단 고정"
+    },
+    "uiLoadingData": {
+        "message": "데이터 불러오는 중..."
+    },
+    "uiErrorBackgroundRequestFailed": {
+        "message": "백그라운드 요청에 실패했습니다."
+    },
+    "uiErrorLoadUiData": {
+        "message": "UI 데이터를 불러오지 못했습니다."
+    },
+    "uiErrorOperationFailed": {
+        "message": "작업에 실패했습니다."
+    },
+    "uiStorageWarningCount": {
+        "message": "주의: 이미지가 $COUNT$장 저장되었습니다(임계값: $THRESHOLD$장). 오래된 이미지의 삭제를 고려하세요.",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            },
+            "threshold": {
+                "content": "$2"
+            }
+        }
+    },
+    "uiStorageDangerCount": {
+        "message": "경고: 이미지가 $COUNT$장 저장되었습니다(임계값: $THRESHOLD$장). 용량 및 성능 문제를 방지하려면 불필요한 이미지를 삭제하세요.",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            },
+            "threshold": {
+                "content": "$2"
+            }
+        }
+    }
+}

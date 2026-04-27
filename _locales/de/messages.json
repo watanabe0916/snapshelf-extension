@@ -1,0 +1,116 @@
+{
+    "extName": {
+        "message": "ClipShelf"
+    },
+    "extDescription": {
+        "message": "Speichern Sie zugeschnittene Screenshots und Seiten-URLs in benannten Gruppen."
+    },
+    "uiCreateNewShelfTitle": {
+        "message": "Neues Regal erstellen"
+    },
+    "uiEnterShelfNamePlaceholder": {
+        "message": "Regalnamen eingeben"
+    },
+    "uiButtonCreate": {
+        "message": "Erstellen"
+    },
+    "uiShelvesTitle": {
+        "message": "Regale"
+    },
+    "uiNoShelvesYet": {
+        "message": "Noch keine Regale. Bitte erstellen Sie oben eines."
+    },
+    "uiButtonSave": {
+        "message": "Speichern"
+    },
+    "uiButtonCancel": {
+        "message": "Abbrechen"
+    },
+    "uiButtonRename": {
+        "message": "Umbenennen"
+    },
+    "uiButtonDeleteShelf": {
+        "message": "Dieses Regal löschen"
+    },
+    "uiConfirmDeleteShelf": {
+        "message": "Dieses Regal löschen. Gespeicherte Bilder werden ebenfalls gelöscht."
+    },
+    "uiGroupImageCount": {
+        "message": "$COUNT$ Bilder",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            }
+        }
+    },
+    "uiButtonOpenLink": {
+        "message": "Link öffnen"
+    },
+    "uiButtonClose": {
+        "message": "Schließen"
+    },
+    "uiSavedImageAlt": {
+        "message": "Von ClipShelf gespeichertes Bild"
+    },
+    "uiFailedToLoadActiveShelfInfo": {
+        "message": "Fehler beim Laden der Informationen für das aktive Regal."
+    },
+    "uiButtonStopSaving": {
+        "message": "Speichern beenden"
+    },
+    "uiSavedImagesTitle": {
+        "message": "Gespeicherte Bilder"
+    },
+    "uiNoImagesInShelf": {
+        "message": "Noch keine Bilder in diesem Regal. Halten Sie die S-Taste gedrückt und ziehen Sie mit der linken Maustaste, um zu speichern."
+    },
+    "uiSavedImageThumbnailAlt": {
+        "message": "Miniaturansicht des gespeicherten Bildes"
+    },
+    "uiFailedToLoadImageDataAlt": {
+        "message": "Bilddaten konnten nicht geladen werden."
+    },
+    "uiDeleteImageTitle": {
+        "message": "Dieses Bild löschen"
+    },
+    "uiDockedTop": {
+        "message": "Oben angedockt"
+    },
+    "uiDockedBottom": {
+        "message": "Unten angedockt"
+    },
+    "uiLoadingData": {
+        "message": "Daten werden geladen..."
+    },
+    "uiErrorBackgroundRequestFailed": {
+        "message": "Hintergrundanfrage fehlgeschlagen."
+    },
+    "uiErrorLoadUiData": {
+        "message": "UI-Daten konnten nicht geladen werden."
+    },
+    "uiErrorOperationFailed": {
+        "message": "Vorgang fehlgeschlagen."
+    },
+    "uiStorageWarningCount": {
+        "message": "Warnung: $COUNT$ Bilder sind gespeichert (Schwellenwert: $THRESHOLD$). Erwägen Sie das Löschen alter Bilder.",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            },
+            "threshold": {
+                "content": "$2"
+            }
+        }
+    },
+    "uiStorageDangerCount": {
+        "message": "Gefahr: $COUNT$ Bilder sind gespeichert (Schwellenwert: $THRESHOLD$). Löschen Sie nicht benötigte Bilder, um Speicher- und Leistungsprobleme zu vermeiden.",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            },
+            "threshold": {
+                "content": "$2"
+            }
+        }
+    }
+}

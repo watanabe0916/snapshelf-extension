@@ -1,0 +1,116 @@
+{
+    "extName": {
+        "message": "ClipShelf"
+    },
+    "extDescription": {
+        "message": "将裁剪的屏幕截图和页面URL保存到命名的分组中。"
+    },
+    "uiCreateNewShelfTitle": {
+        "message": "创建新书架"
+    },
+    "uiEnterShelfNamePlaceholder": {
+        "message": "输入书架名称"
+    },
+    "uiButtonCreate": {
+        "message": "创建"
+    },
+    "uiShelvesTitle": {
+        "message": "书架列表"
+    },
+    "uiNoShelvesYet": {
+        "message": "暂无书架。请在上方表单中创建一个。"
+    },
+    "uiButtonSave": {
+        "message": "保存"
+    },
+    "uiButtonCancel": {
+        "message": "取消"
+    },
+    "uiButtonRename": {
+        "message": "重命名"
+    },
+    "uiButtonDeleteShelf": {
+        "message": "删除此书架"
+    },
+    "uiConfirmDeleteShelf": {
+        "message": "删除此书架。保存的图像也将被删除。"
+    },
+    "uiGroupImageCount": {
+        "message": "$COUNT$ 张图像",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            }
+        }
+    },
+    "uiButtonOpenLink": {
+        "message": "打开链接"
+    },
+    "uiButtonClose": {
+        "message": "关闭"
+    },
+    "uiSavedImageAlt": {
+        "message": "ClipShelf 保存的图像"
+    },
+    "uiFailedToLoadActiveShelfInfo": {
+        "message": "无法加载当前书架信息。"
+    },
+    "uiButtonStopSaving": {
+        "message": "停止保存"
+    },
+    "uiSavedImagesTitle": {
+        "message": "已保存图像"
+    },
+    "uiNoImagesInShelf": {
+        "message": "此书架中暂无图像。按住 S 键并左键拖动以进行保存。"
+    },
+    "uiSavedImageThumbnailAlt": {
+        "message": "已保存图像的缩略图"
+    },
+    "uiFailedToLoadImageDataAlt": {
+        "message": "无法加载图像数据。"
+    },
+    "uiDeleteImageTitle": {
+        "message": "删除此图像"
+    },
+    "uiDockedTop": {
+        "message": "停靠在顶部"
+    },
+    "uiDockedBottom": {
+        "message": "停靠在底部"
+    },
+    "uiLoadingData": {
+        "message": "正在加载数据..."
+    },
+    "uiErrorBackgroundRequestFailed": {
+        "message": "后台请求失败。"
+    },
+    "uiErrorLoadUiData": {
+        "message": "UI 数据加载失败。"
+    },
+    "uiErrorOperationFailed": {
+        "message": "操作失败。"
+    },
+    "uiStorageWarningCount": {
+        "message": "警告：已保存 $COUNT$ 张图像（阈值：$THRESHOLD$）。请考虑删除旧图像。",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            },
+            "threshold": {
+                "content": "$2"
+            }
+        }
+    },
+    "uiStorageDangerCount": {
+        "message": "危险：已保存 $COUNT$ 张图像（阈值：$THRESHOLD$）。请删除不必要的图像，以免影响存储和性能。",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            },
+            "threshold": {
+                "content": "$2"
+            }
+        }
+    }
+}
