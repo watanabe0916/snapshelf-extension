@@ -1,0 +1,94 @@
+{
+    "extName": {
+        "message": "ClipShelf"
+    },
+    "extDescription": {
+        "message": "切り抜き画像とページURLを名前付きグループに保存します。"
+    },
+    "uiCreateNewShelfTitle": {
+        "message": "新しい棚を作成"
+    },
+    "uiEnterShelfNamePlaceholder": {
+        "message": "棚名を入力"
+    },
+    "uiButtonCreate": {
+        "message": "作成"
+    },
+    "uiShelvesTitle": {
+        "message": "棚一覧"
+    },
+    "uiNoShelvesYet": {
+        "message": "まだ棚がありません。上のフォームから作成してください。"
+    },
+    "uiButtonSave": {
+        "message": "保存"
+    },
+    "uiButtonCancel": {
+        "message": "キャンセル"
+    },
+    "uiButtonRename": {
+        "message": "名前変更"
+    },
+    "uiButtonDeleteShelf": {
+        "message": "この棚を削除"
+    },
+    "uiConfirmDeleteShelf": {
+        "message": "この棚を削除します。保存済み画像も削除されます。"
+    },
+    "uiGroupImageCount": {
+        "message": "$COUNT$ 枚",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            }
+        }
+    },
+    "uiButtonOpenLink": {
+        "message": "リンクを開く"
+    },
+    "uiButtonClose": {
+        "message": "閉じる"
+    },
+    "uiSavedImageAlt": {
+        "message": "ClipShelfの保存画像"
+    },
+    "uiFailedToLoadActiveShelfInfo": {
+        "message": "選択中棚の情報を読み込めませんでした。"
+    },
+    "uiButtonStopSaving": {
+        "message": "保存を終了"
+    },
+    "uiSavedImagesTitle": {
+        "message": "保存済み画像"
+    },
+    "uiNoImagesInShelf": {
+        "message": "この棚にはまだ画像がありません。Sキーを押しながら左ドラッグで保存できます。"
+    },
+    "uiSavedImageThumbnailAlt": {
+        "message": "保存画像のサムネイル"
+    },
+    "uiFailedToLoadImageDataAlt": {
+        "message": "画像データの読み込みに失敗しました。"
+    },
+    "uiDeleteImageTitle": {
+        "message": "この画像を削除"
+    },
+    "uiDockedTop": {
+        "message": "上部固定"
+    },
+    "uiDockedBottom": {
+        "message": "下部固定"
+    },
+    "uiLoadingData": {
+        "message": "データを読み込み中..."
+    },
+    "uiErrorBackgroundRequestFailed": {
+        "message": "バックグラウンドへのリクエストに失敗しました。"
+    },
+    "uiErrorLoadUiData": {
+        "message": "UIデータの読み込みに失敗しました。"
+    },
+    "uiErrorOperationFailed": {
+        "message": "操作に失敗しました。"
+    }
+}

@@ -1,0 +1,94 @@
+{
+    "extName": {
+        "message": "ClipShelf"
+    },
+    "extDescription": {
+        "message": "Save cropped screenshots and page URLs into named groups."
+    },
+    "uiCreateNewShelfTitle": {
+        "message": "Create a new shelf"
+    },
+    "uiEnterShelfNamePlaceholder": {
+        "message": "Enter shelf name"
+    },
+    "uiButtonCreate": {
+        "message": "Create"
+    },
+    "uiShelvesTitle": {
+        "message": "Shelves"
+    },
+    "uiNoShelvesYet": {
+        "message": "No shelves yet. Please create one from the form above."
+    },
+    "uiButtonSave": {
+        "message": "Save"
+    },
+    "uiButtonCancel": {
+        "message": "Cancel"
+    },
+    "uiButtonRename": {
+        "message": "Rename"
+    },
+    "uiButtonDeleteShelf": {
+        "message": "Delete this shelf"
+    },
+    "uiConfirmDeleteShelf": {
+        "message": "Delete this shelf. Saved images will also be deleted."
+    },
+    "uiGroupImageCount": {
+        "message": "$COUNT$ images",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            }
+        }
+    },
+    "uiButtonOpenLink": {
+        "message": "Open link"
+    },
+    "uiButtonClose": {
+        "message": "Close"
+    },
+    "uiSavedImageAlt": {
+        "message": "ClipShelf saved image"
+    },
+    "uiFailedToLoadActiveShelfInfo": {
+        "message": "Failed to load active shelf information."
+    },
+    "uiButtonStopSaving": {
+        "message": "Stop saving"
+    },
+    "uiSavedImagesTitle": {
+        "message": "Saved images"
+    },
+    "uiNoImagesInShelf": {
+        "message": "No images in this shelf yet. Hold the S key and left-drag to save."
+    },
+    "uiSavedImageThumbnailAlt": {
+        "message": "Saved image thumbnail"
+    },
+    "uiFailedToLoadImageDataAlt": {
+        "message": "Failed to load image data."
+    },
+    "uiDeleteImageTitle": {
+        "message": "Delete this image"
+    },
+    "uiDockedTop": {
+        "message": "Docked Top"
+    },
+    "uiDockedBottom": {
+        "message": "Docked Bottom"
+    },
+    "uiLoadingData": {
+        "message": "Loading data..."
+    },
+    "uiErrorBackgroundRequestFailed": {
+        "message": "Background request failed."
+    },
+    "uiErrorLoadUiData": {
+        "message": "Failed to load UI data."
+    },
+    "uiErrorOperationFailed": {
+        "message": "Operation failed."
+    }
+}

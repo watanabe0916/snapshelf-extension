@@ -77,7 +77,7 @@ function sendRuntimeMessage(type, payload = {}) {
                 }
 
                 if (!response || response.ok !== true) {
-                    reject(new Error(response?.error || 'Background request failed.'));
+                    reject(new Error(response?.error || i18nMessage('uiErrorBackgroundRequestFailed')));
                     return;
                 }
 
@@ -89,6 +89,11 @@ function sendRuntimeMessage(type, payload = {}) {
 
 function normalizeUiPosition(value) {
     return value === 'top' ? 'top' : 'bottom';
+}
+
+function i18nMessage(key, substitutions) {
+    const message = chrome.i18n.getMessage(key, substitutions);
+    return typeof message === 'string' ? message : '';
 }
 
 function createTrackedObjectUrl(blob) {
@@ -537,8 +542,9 @@ function ensureUiHost() {
         }
 
         .lightbox-open-link:hover {
-            background: rgba(15, 23, 42, 0.96);
-            border-color: rgba(226, 232, 240, 0.75);
+            background: rgba(194, 65, 12, 0.95);
+            border-color: rgba(255, 255, 255, 0.75);
+            box-shadow: 0 8px 20px rgba(194, 65, 12, 0.28);
         }
 
         .lightbox-open-link:disabled {
@@ -566,9 +572,11 @@ function ensureUiHost() {
             place-items: center;
             cursor: pointer;
             box-shadow: 0 8px 20px rgba(15, 23, 42, 0.35);
+            transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
         }
 
         .lightbox-close:hover {
+            transform: translateY(-1px);
             background: rgba(194, 65, 12, 0.95);
         }
 
@@ -659,7 +667,7 @@ function renderNoActiveGroupState(panelBody, model) {
 
     const createTitle = document.createElement('h3');
     createTitle.className = 'section-title';
-    createTitle.textContent = 'Create a new shelf';
+    createTitle.textContent = i18nMessage('uiCreateNewShelfTitle');
     createSection.appendChild(createTitle);
 
     const createRow = document.createElement('div');
@@ -667,10 +675,10 @@ function renderNoActiveGroupState(panelBody, model) {
 
     const groupNameInput = document.createElement('input');
     groupNameInput.className = 'input';
-    groupNameInput.placeholder = 'Enter shelf name';
+    groupNameInput.placeholder = i18nMessage('uiEnterShelfNamePlaceholder');
     groupNameInput.maxLength = 80;
 
-    const createButtonElement = createButton('Create', 'btn', () => {
+    const createButtonElement = createButton(i18nMessage('uiButtonCreate'), 'btn', () => {
         void withUiMutation(async () => {
             await sendRuntimeMessage(MESSAGE_TYPES.CREATE_GROUP, { name: groupNameInput.value });
         });
@@ -692,14 +700,14 @@ function renderNoActiveGroupState(panelBody, model) {
 
     const listTitle = document.createElement('h3');
     listTitle.className = 'section-title';
-    listTitle.textContent = 'Shelves';
+    listTitle.textContent = i18nMessage('uiShelvesTitle');
     listSection.appendChild(listTitle);
 
     const groups = Array.isArray(model.groups) ? model.groups : [];
     if (groups.length === 0) {
         const emptyText = document.createElement('p');
         emptyText.className = 'empty';
-        emptyText.textContent = 'No shelves yet. Please create one from the form above.';
+        emptyText.textContent = i18nMessage('uiNoShelvesYet');
         listSection.appendChild(emptyText);
         panelBody.appendChild(listSection);
         return;
@@ -721,7 +729,7 @@ function renderNoActiveGroupState(panelBody, model) {
             renameInput.value = group.name;
             renameInput.maxLength = 80;
 
-            const saveRename = createButton('Save', 'btn', () => {
+            const saveRename = createButton(i18nMessage('uiButtonSave'), 'btn', () => {
                 void withUiMutation(async () => {
                     await sendRuntimeMessage(MESSAGE_TYPES.RENAME_GROUP, {
                         groupId: group.id,
@@ -750,7 +758,7 @@ function renderNoActiveGroupState(panelBody, model) {
 
             const count = document.createElement('span');
             count.className = 'count-pill';
-            count.textContent = `${group.count} images`;
+            count.textContent = i18nMessage('uiGroupImageCount', String(group.count ?? 0));
 
             head.append(name, count);
         }
@@ -759,19 +767,19 @@ function renderNoActiveGroupState(panelBody, model) {
         controls.className = 'group-controls';
 
         if (uiState.editingGroupId === group.id) {
-            const cancelRename = createButton('Cancel', 'btn secondary', () => {
+            const cancelRename = createButton(i18nMessage('uiButtonCancel'), 'btn secondary', () => {
                 uiState.editingGroupId = null;
                 renderUiPanel();
             });
             controls.appendChild(cancelRename);
         } else {
-            const renameButton = createButton('Rename', 'btn secondary', () => {
+            const renameButton = createButton(i18nMessage('uiButtonRename'), 'btn secondary', () => {
                 uiState.editingGroupId = group.id;
                 renderUiPanel();
             });
 
-            const deleteButton = createButton('Delete this shelf', 'btn danger', () => {
-                const confirmed = window.confirm('Delete this shelf. Saved images will also be deleted.');
+            const deleteButton = createButton(i18nMessage('uiButtonDeleteShelf'), 'btn danger', () => {
+                const confirmed = window.confirm(i18nMessage('uiConfirmDeleteShelf'));
                 if (!confirmed) {
                     return;
                 }
@@ -824,7 +832,7 @@ function openLightbox(screenshot) {
 
     const image = document.createElement('img');
     image.className = 'lightbox-image';
-    image.alt = 'ClipShelf saved image';
+    image.alt = i18nMessage('uiSavedImageAlt');
 
     image.src = imageSource;
     uiState.lightboxUrl = imageSource.startsWith('blob:') ? imageSource : null;
@@ -832,7 +840,7 @@ function openLightbox(screenshot) {
     const actions = document.createElement('div');
     actions.className = 'lightbox-actions';
 
-    const openLinkButton = createButton('Open link', 'btn lightbox-open-link', () => {
+    const openLinkButton = createButton(i18nMessage('uiButtonOpenLink'), 'btn lightbox-open-link', () => {
         if (typeof screenshot.pageUrl === 'string' && screenshot.pageUrl.length > 0) {
             window.open(screenshot.pageUrl, '_blank', 'noopener,noreferrer');
         }
@@ -845,7 +853,7 @@ function openLightbox(screenshot) {
     const closeButton = createButton('×', 'lightbox-close', () => {
         closeLightbox();
     });
-    closeButton.title = 'Close';
+    closeButton.title = i18nMessage('uiButtonClose');
 
     actions.append(openLinkButton, closeButton);
     inner.append(image, actions);
@@ -866,7 +874,7 @@ function renderActiveGroupState(panelBody, model) {
     if (!activeGroup) {
         const fallback = document.createElement('p');
         fallback.className = 'empty';
-        fallback.textContent = 'Failed to load active shelf information.';
+        fallback.textContent = i18nMessage('uiFailedToLoadActiveShelfInfo');
         panelBody.appendChild(fallback);
         return;
     }
@@ -877,14 +885,14 @@ function renderActiveGroupState(panelBody, model) {
     const titleRow = document.createElement('div');
     titleRow.className = 'inline-row active-group-row';
 
-    const endSaveButton = createButton('Stop saving', 'btn secondary', () => {
+    const endSaveButton = createButton(i18nMessage('uiButtonStopSaving'), 'btn secondary', () => {
         void withUiMutation(async () => {
             await sendRuntimeMessage(MESSAGE_TYPES.END_SAVE_MODE);
         });
     });
 
-    const deleteGroupButton = createButton('Delete this shelf', 'btn danger', () => {
-        const confirmed = window.confirm('Delete this shelf. Saved images will also be deleted.');
+    const deleteGroupButton = createButton(i18nMessage('uiButtonDeleteShelf'), 'btn danger', () => {
+        const confirmed = window.confirm(i18nMessage('uiConfirmDeleteShelf'));
         if (!confirmed) {
             return;
         }
@@ -900,7 +908,7 @@ function renderActiveGroupState(panelBody, model) {
         renameInput.value = activeGroup.name;
         renameInput.maxLength = 80;
 
-        const saveRename = createButton('Save', 'btn', () => {
+        const saveRename = createButton(i18nMessage('uiButtonSave'), 'btn', () => {
             void withUiMutation(async () => {
                 await sendRuntimeMessage(MESSAGE_TYPES.RENAME_GROUP, {
                     groupId: activeGroup.id,
@@ -909,7 +917,7 @@ function renderActiveGroupState(panelBody, model) {
             });
         });
 
-        const cancelRename = createButton('Cancel', 'btn secondary', () => {
+        const cancelRename = createButton(i18nMessage('uiButtonCancel'), 'btn secondary', () => {
             uiState.editingGroupId = null;
             renderUiPanel();
         });
@@ -937,9 +945,9 @@ function renderActiveGroupState(panelBody, model) {
 
         const count = document.createElement('span');
         count.className = 'count-pill';
-        count.textContent = `${activeGroup.count || 0} images`;
+        count.textContent = i18nMessage('uiGroupImageCount', String(activeGroup.count || 0));
 
-        const renameButton = createButton('Rename', 'btn secondary', () => {
+        const renameButton = createButton(i18nMessage('uiButtonRename'), 'btn secondary', () => {
             uiState.editingGroupId = activeGroup.id;
             renderUiPanel();
         });
@@ -963,14 +971,14 @@ function renderActiveGroupState(panelBody, model) {
 
     const screenshotsTitle = document.createElement('h3');
     screenshotsTitle.className = 'section-title';
-    screenshotsTitle.textContent = 'Saved images';
+    screenshotsTitle.textContent = i18nMessage('uiSavedImagesTitle');
     screenshotsSection.appendChild(screenshotsTitle);
 
     const screenshots = Array.isArray(model.screenshots) ? model.screenshots : [];
     if (screenshots.length === 0) {
         const emptyText = document.createElement('p');
         emptyText.className = 'empty';
-        emptyText.textContent = 'No images in this shelf yet. Hold the S key and left-drag to save.';
+        emptyText.textContent = i18nMessage('uiNoImagesInShelf');
         screenshotsSection.appendChild(emptyText);
     } else {
         const grid = document.createElement('div');
@@ -983,20 +991,20 @@ function renderActiveGroupState(panelBody, model) {
             const image = document.createElement('img');
             image.loading = 'lazy';
             image.decoding = 'async';
-            image.alt = 'Saved image thumbnail';
+            image.alt = i18nMessage('uiSavedImageThumbnailAlt');
 
             const imageSource = resolveScreenshotImageSource(screenshot);
             if (imageSource) {
                 image.src = imageSource;
             } else {
-                image.alt = 'Failed to load image data.';
+                image.alt = i18nMessage('uiFailedToLoadImageDataAlt');
             }
 
             const deleteButton = document.createElement('button');
             deleteButton.type = 'button';
             deleteButton.className = 'thumb-delete';
             deleteButton.textContent = '×';
-            deleteButton.title = 'Delete this image';
+            deleteButton.title = i18nMessage('uiDeleteImageTitle');
 
             deleteButton.addEventListener('click', (event) => {
                 event.stopPropagation();
@@ -1007,7 +1015,7 @@ function renderActiveGroupState(panelBody, model) {
 
             const meta = document.createElement('span');
             meta.className = 'thumb-meta';
-            meta.textContent = new Date(screenshot.timestamp).toLocaleString('en-US');
+            meta.textContent = new Date(screenshot.timestamp).toLocaleString();
 
             item.append(image, deleteButton, meta);
 
@@ -1043,11 +1051,12 @@ function renderUiPanel() {
 
     const title = document.createElement('span');
     title.className = 'panel-title';
-    title.textContent = 'ClipShelf';
+    title.textContent = i18nMessage('extName');
 
     const positionLabel = document.createElement('span');
     positionLabel.className = 'panel-pos';
-    positionLabel.textContent = uiState.uiPosition === 'top' ? 'Docked Top' : 'Docked Bottom';
+    positionLabel.textContent =
+        uiState.uiPosition === 'top' ? i18nMessage('uiDockedTop') : i18nMessage('uiDockedBottom');
 
     header.append(title, positionLabel);
     panel.appendChild(header);
@@ -1061,7 +1070,7 @@ function renderUiPanel() {
     if (!uiState.model) {
         const loadingText = document.createElement('p');
         loadingText.className = 'empty';
-        loadingText.textContent = 'Loading data...';
+        loadingText.textContent = i18nMessage('uiLoadingData');
         body.appendChild(loadingText);
         return;
     }
@@ -1088,7 +1097,7 @@ async function refreshAndRenderUi() {
         renderUiPanel();
     } catch (error) {
         uiState.model = null;
-        uiState.lastError = error?.message || 'Failed to load UI data.';
+        uiState.lastError = error?.message || i18nMessage('uiErrorLoadUiData');
         renderUiPanel();
     }
 }
@@ -1100,7 +1109,7 @@ async function withUiMutation(action) {
         uiState.editingGroupId = null;
         await refreshAndRenderUi();
     } catch (error) {
-        uiState.lastError = error?.message || 'Operation failed.';
+        uiState.lastError = error?.message || i18nMessage('uiErrorOperationFailed');
         renderUiPanel();
     }
 }
@@ -1368,6 +1377,15 @@ function blockNativeSelectionWhileDragging(event) {
     event.stopPropagation();
 }
 
+function handleContextMenu(event) {
+    if (!keyboardState.isSelectionKeyPressed && !selectionState.isSelecting) {
+        return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+}
+
 function handleWindowBlur() {
     resetSelectionShortcutState();
 
@@ -1383,6 +1401,7 @@ document.addEventListener('mousemove', handleMouseMove, true);
 document.addEventListener('mouseup', handleMouseUp, true);
 document.addEventListener('dragstart', blockNativeSelectionWhileDragging, true);
 document.addEventListener('selectstart', blockNativeSelectionWhileDragging, true);
+document.addEventListener('contextmenu', handleContextMenu, true);
 window.addEventListener('blur', handleWindowBlur, true);
 window.addEventListener('beforeunload', () => {
     resetSelectionShortcutState();
