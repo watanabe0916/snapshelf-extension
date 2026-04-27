@@ -526,6 +526,52 @@ function ensureUiHost() {
 			box-shadow: 0 8px 20px rgba(15, 23, 42, 0.35);
 		}
 
+        .lightbox-open-link {
+            background: rgba(15, 23, 42, 0.9);
+            color: #f8fafc;
+            border: 1px solid rgba(148, 163, 184, 0.58);
+            font-size: 12px;
+            padding: 7px 11px;
+            line-height: 1.2;
+            text-shadow: 0 1px 1px rgba(15, 23, 42, 0.45);
+        }
+
+        .lightbox-open-link:hover {
+            background: rgba(15, 23, 42, 0.96);
+            border-color: rgba(226, 232, 240, 0.75);
+        }
+
+        .lightbox-open-link:disabled {
+            background: rgba(100, 116, 139, 0.72);
+            color: #e2e8f0;
+            border-color: rgba(148, 163, 184, 0.45);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .lightbox-close {
+            pointer-events: auto;
+            width: clamp(26px, 2.7vw, 34px);
+            height: clamp(26px, 2.7vw, 34px);
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.75);
+            background: rgba(15, 23, 42, 0.76);
+            color: #fff;
+            font-size: clamp(15px, 1.8vw, 20px);
+            font-weight: 700;
+            line-height: 1;
+            padding: 0;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.35);
+        }
+
+        .lightbox-close:hover {
+            background: rgba(194, 65, 12, 0.95);
+        }
+
 		@keyframes fadeIn {
 			from { opacity: 0; }
 			to { opacity: 1; }
@@ -786,7 +832,7 @@ function openLightbox(screenshot) {
     const actions = document.createElement('div');
     actions.className = 'lightbox-actions';
 
-    const openLinkButton = createButton('Open link', 'btn', () => {
+    const openLinkButton = createButton('Open link', 'btn lightbox-open-link', () => {
         if (typeof screenshot.pageUrl === 'string' && screenshot.pageUrl.length > 0) {
             window.open(screenshot.pageUrl, '_blank', 'noopener,noreferrer');
         }
@@ -794,12 +840,12 @@ function openLightbox(screenshot) {
 
     if (!screenshot.pageUrl) {
         openLinkButton.disabled = true;
-        openLinkButton.classList.add('secondary');
     }
 
-    const closeButton = createButton('Close', 'btn secondary', () => {
+    const closeButton = createButton('×', 'lightbox-close', () => {
         closeLightbox();
     });
+    closeButton.title = 'Close';
 
     actions.append(openLinkButton, closeButton);
     inner.append(image, actions);
