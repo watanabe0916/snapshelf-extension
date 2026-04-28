@@ -1,26 +1,32 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <title>ClipShelf</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <style>
         :root {
-            --bg-color: #FCFBF9;        /* 柔らかなオフホワイト */
-            --accent: #D67D5C;          /* テラコッタ */
-            --accent-hover: #C16A4B;    /* 濃いテラコッタ */
-            --text-main: #374151;       /* チャコール */
-            --text-muted: #6B7280;      /* グレー */
+            --bg-color: #FCFBF9;
+            --accent: #D67D5C;
+            --accent-hover: #C16A4B;
+            --text-main: #374151;
+            --text-muted: #6B7280;
             --card-bg: #FFFFFF;
             --line: #F3F4F6;
-            --radius-lg: 20px;          
+            --radius-lg: 20px;
             --radius-md: 14px;
-            --shadow-sm: 0 2px 6px rgba(0,0,0,0.03);
-            --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.03);
+            --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
             --danger: #EF4444;
         }
 
-        *, *::before, *::after { box-sizing: border-box; }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
@@ -34,10 +40,22 @@
             overflow: hidden;
         }
 
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #D1D5DB; }
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #E5E7EB;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #D1D5DB;
+        }
 
         #app-container {
             display: flex;
@@ -61,6 +79,7 @@
             flex: 1 1 0;
             min-height: 0;
             overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .section-title {
@@ -79,11 +98,27 @@
             gap: 8px;
         }
 
-        .active-group-row { justify-content: space-between; }
-        .active-group-meta { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
-        .active-group-actions { display: flex; gap: 6px; align-items: center; }
+        .active-group-row {
+            justify-content: space-between;
+        }
 
-        .input, .rename-input {
+        .active-group-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .active-group-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .input,
+        .rename-input {
             flex: 1;
             border: 1px solid var(--line);
             border-radius: 12px;
@@ -93,7 +128,13 @@
             color: var(--text-main);
             transition: border-color 0.2s;
         }
-        .input:focus, .rename-input:focus { border-color: var(--accent); outline: none; background: #FFF; }
+
+        .input:focus,
+        .rename-input:focus {
+            border-color: var(--accent);
+            outline: none;
+            background: #FFF;
+        }
 
         .btn {
             border: none;
@@ -105,12 +146,37 @@
             transition: all 0.2s;
             white-space: nowrap;
         }
-        .btn.primary, .btn:not(.secondary):not(.danger):not(.icon-btn) { background: var(--accent); color: #FFF; }
-        .btn.primary:hover, .btn:not(.secondary):not(.danger):not(.icon-btn):hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(214, 125, 92, 0.2); }
-        .btn.secondary { background: #F3F4F6; color: var(--text-main); }
-        .btn.secondary:hover { background: #E5E7EB; }
-        .btn.danger { background: #FEE2E2; color: var(--danger); }
-        .btn.danger:hover { background: #FECACA; }
+
+        .btn.primary,
+        .btn:not(.secondary):not(.danger):not(.icon-btn) {
+            background: var(--accent);
+            color: #FFF;
+        }
+
+        .btn.primary:hover,
+        .btn:not(.secondary):not(.danger):not(.icon-btn):hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(214, 125, 92, 0.2);
+        }
+
+        .btn.secondary {
+            background: #F3F4F6;
+            color: var(--text-main);
+        }
+
+        .btn.secondary:hover {
+            background: #E5E7EB;
+        }
+
+        .btn.danger {
+            background: #FEE2E2;
+            color: var(--danger);
+        }
+
+        .btn.danger:hover {
+            background: #FECACA;
+        }
 
         .icon-btn {
             background: #F3F4F6;
@@ -125,11 +191,29 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .icon-btn:hover { background: #E5E7EB; color: var(--text-main); }
-        .icon-btn.danger:hover { background: #FEE2E2; color: var(--danger); }
-        .shelf-icon { color: var(--accent); font-size: 28px; font-variation-settings: 'FILL' 1; }
 
-        .group-list { display: grid; gap: 8px; align-content: start; }
+        .icon-btn:hover {
+            background: #E5E7EB;
+            color: var(--text-main);
+        }
+
+        .icon-btn.danger:hover {
+            background: #FEE2E2;
+            color: var(--danger);
+        }
+
+        .shelf-icon {
+            color: var(--accent);
+            font-size: 28px;
+            font-variation-settings: 'FILL' 1;
+        }
+
+        .group-list {
+            display: grid;
+            gap: 8px;
+            align-content: start;
+        }
+
         .group-item {
             background: #FDFDFD;
             border: 1px solid var(--line);
@@ -141,15 +225,50 @@
             cursor: pointer;
             transition: all 0.2s;
             gap: 8px;
+            min-width: 0;
+            /* これを追加することで縮小を許可 */
         }
-        .group-item:hover { border-color: var(--accent); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
 
-        .group-name { font-size: 15px; font-weight: 700; }
-        .count-pill { font-size: 11px; color: var(--text-muted); margin-left: 0; }
-        .group-controls { display: flex; gap: 6px; }
+        .group-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
 
-        .thumb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
-        .thumb-scroll { overflow-y: auto; overflow-x: hidden; flex: 1; min-height: 0; }
+        .group-name {
+            font-size: 15px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+        }
+
+        .count-pill {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-left: 0;
+        }
+
+        .group-controls {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .thumb-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+        }
+
+        .thumb-scroll {
+            overflow-y: auto;
+            overflow-x: hidden;
+            flex: 1;
+            min-height: 0;
+        }
+
         .thumb-item {
             position: relative;
             border-radius: var(--radius-md);
@@ -160,9 +279,25 @@
             transition: transform 0.2s;
             border: 1px solid var(--line);
         }
-        .thumb-item:hover { transform: scale(1.02); }
-        .thumb-item img { width: 100%; height: 100px; object-fit: cover; display: block; }
-        .thumb-meta { display: block; padding: 6px 8px; font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+
+        .thumb-item:hover {
+            transform: scale(1.02);
+        }
+
+        .thumb-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .thumb-meta {
+            display: block;
+            padding: 6px 8px;
+            font-size: 10px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
 
         .thumb-delete {
             position: absolute;
@@ -178,43 +313,127 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             transition: all 0.2s;
         }
-        .thumb-delete:hover { background: var(--danger); color: #FFF; }
 
-        .empty { color: var(--text-muted); font-size: 13px; margin: 0; text-align: center; padding: 20px; }
-        .status-error { border: 1px solid #FECACA; color: var(--danger); background: #FEF2F2; border-radius: 8px; padding: 10px; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
-
-        /* --- ライトボックス（画像拡大表示）のスタイル --- */
-        /* 背景のオーバーレイ */
-        .lightbox { position: fixed; inset: 0; background: rgba(25, 25, 25, 0.8); backdrop-filter: blur(4px); display: grid; place-items: center; padding: 20px; z-index: 100; }
-        
-        /* 画像サイズに合わせてコンテナを縮小（ボタンがはみ出ないように width: fit-content を指定） */
-        .lightbox-inner { position: relative; width: fit-content; max-width: 90vw; max-height: 90vh; border-radius: var(--radius-lg); overflow: hidden; background: transparent; display: flex; justify-content: center; }
-        
-        /* 拡大画像本体 */
-        .lightbox-image { width: auto; height: auto; max-width: 90vw; max-height: 90vh; object-fit: contain; display: block; border-radius: var(--radius-lg); }
-        
-        /* 画像内の上部にボタンを配置するコンテナ */
-        .lightbox-actions { position: absolute; top: 16px; left: 16px; right: 16px; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
-        .lightbox-actions .btn, .lightbox-close { pointer-events: auto; }
-
-        /* 「リンクを開く」ボタン */
-        .lightbox-open-link { background: rgba(255, 255, 255, 0.9); color: var(--text-main); font-size: 13px; padding: 8px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .lightbox-open-link:hover { background: var(--accent); color: #FFF; }
-        .lightbox-open-link:disabled { background: rgba(255, 255, 255, 0.5); cursor: not-allowed; }
-
-        /* 閉じるボタン */
-        .lightbox-close {
-            width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.9); color: var(--text-main);
-            border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.2s;
+        .thumb-delete:hover {
+            background: var(--danger);
+            color: #FFF;
         }
-        .lightbox-close:hover { background: var(--danger); color: #FFF; transform: scale(1.05); }
+
+        .empty {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin: 0;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .status-error {
+            border: 1px solid #FECACA;
+            color: var(--danger);
+            background: #FEF2F2;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(25, 25, 25, 0.8);
+            backdrop-filter: blur(4px);
+            display: grid;
+            place-items: center;
+            padding: 20px;
+            z-index: 100;
+        }
+
+        .lightbox-inner {
+            position: relative;
+            width: fit-content;
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            background: transparent;
+            display: flex;
+            justify-content: center;
+        }
+
+        .lightbox-image {
+            width: auto;
+            height: auto;
+            max-width: 90vw;
+            max-height: 90vh;
+            object-fit: contain;
+            display: block;
+            border-radius: var(--radius-lg);
+        }
+
+        .lightbox-actions {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            right: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .lightbox-actions .btn,
+        .lightbox-close {
+            pointer-events: auto;
+        }
+
+        .lightbox-open-link {
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text-main);
+            font-size: 13px;
+            padding: 8px 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .lightbox-open-link:hover {
+            background: var(--accent);
+            color: #FFF;
+        }
+
+        .lightbox-open-link:disabled {
+            background: rgba(255, 255, 255, 0.5);
+            cursor: not-allowed;
+        }
+
+        .lightbox-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text-main);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.2s;
+        }
+
+        .lightbox-close:hover {
+            background: var(--danger);
+            color: #FFF;
+            transform: scale(1.05);
+        }
     </style>
 </head>
+
 <body>
     <div id="app-container"></div>
     <script src="panel.js"></script>
 </body>
+
 </html>

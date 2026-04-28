@@ -67,30 +67,23 @@ function createIconButton(iconName, className, onClick, titleText = '') {
     return btn;
 }
 
-// --- UI微調整用コメント ---
-// ここが画像拡大（ライトボックス）を表示する関数です
 function openLightbox(screenshot) {
     const container = document.body;
-    
-    // 背景の暗いオーバーレイ
+
     const overlay = document.createElement('div');
     overlay.className = 'lightbox';
 
-    // 画像とボタンを包むコンテナ（CSSで画像の幅にフィットさせています）
     const inner = document.createElement('div');
     inner.className = 'lightbox-inner';
 
-    // 拡大画像本体
     const image = document.createElement('img');
     image.className = 'lightbox-image';
     image.src = screenshot.imageDataUrl;
     image.alt = getMessage('uiSavedImageAlt');
 
-    // ボタン配置用のコンテナ
     const actions = document.createElement('div');
     actions.className = 'lightbox-actions';
 
-    // 「リンクを開く」ボタン
     const openLinkBtn = createButton(getMessage('uiButtonOpenLink'), 'btn lightbox-open-link', (e) => {
         e.stopPropagation();
         if (screenshot.pageUrl) {
@@ -111,7 +104,6 @@ function openLightbox(screenshot) {
         openLinkBtn.disabled = true;
     }
 
-    // 「閉じる」ボタン
     const closeBtn = document.createElement('button');
     closeBtn.className = 'lightbox-close';
     closeBtn.title = getMessage('uiButtonClose');
@@ -125,7 +117,6 @@ function openLightbox(screenshot) {
         if (e.target === overlay) overlay.remove();
     });
 
-    // 構築と画面への追加
     actions.append(openLinkBtn, closeBtn);
     inner.append(image, actions);
     overlay.appendChild(inner);
@@ -142,14 +133,14 @@ function renderNoActiveGroupState(container, model) {
     const input = document.createElement('input');
     input.className = 'input';
     input.placeholder = getMessage('uiEnterShelfNamePlaceholder');
-    
+
     const btn = createButton(getMessage('uiButtonCreate'), 'btn primary', async () => {
         try {
             await sendRuntimeMessage(MESSAGE_TYPES.CREATE_GROUP, { name: input.value });
             refreshUi();
         } catch (e) { uiState.lastError = e.message; refreshUi(); }
     });
-    
+
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') btn.click(); });
     row.append(input, btn);
     createSection.appendChild(row);
@@ -188,12 +179,12 @@ function renderNoActiveGroupState(container, model) {
                 const nameArea = document.createElement('div');
                 nameArea.className = 'active-group-meta';
                 nameArea.innerHTML = `
-                    <span class="material-symbols-rounded shelf-icon">library_books</span>
-                    <div style="display:flex; flex-direction:column;">
-                        <span class="group-name">${group.name}</span>
+                    <span class="material-symbols-rounded shelf-icon" style="flex-shrink: 0;">library_books</span>
+                    <div style="display: flex; flex-direction: column; flex: 1; min-width: 0;">
+                        <span class="group-name" title="${group.name}">${group.name}</span>
                         <span class="count-pill">${getMessage('uiGroupImageCount', [String(group.count || 0)])}</span>
                     </div>`;
-                
+
                 const controls = document.createElement('div');
                 controls.className = 'group-controls';
                 controls.append(
@@ -250,11 +241,11 @@ function renderActiveGroupState(container, model) {
         meta.className = 'active-group-meta';
         meta.innerHTML = `
             <span class="material-symbols-rounded shelf-icon" style="font-size:32px;">library_books</span>
-            <div style="display:flex; flex-direction:column;">
-                <strong class="group-name" style="font-size:16px;">${activeGroup.name}</strong>
+            <div style="display:flex; flex-direction:column; min-width:0; flex:1; overflow:hidden;">
+                <strong class="group-name" style="font-size:16px;" title="${activeGroup.name}">${activeGroup.name}</strong>
                 <span class="count-pill">${getMessage('uiGroupImageCount', [String(activeGroup.count || 0)])}</span>
             </div>`;
-        
+
         const actions = document.createElement('div');
         actions.className = 'active-group-actions';
         actions.append(
@@ -287,11 +278,11 @@ function renderActiveGroupState(container, model) {
         model.screenshots.forEach(screenshot => {
             const item = document.createElement('div');
             item.className = 'thumb-item';
-            
+
             const img = document.createElement('img');
             img.src = screenshot.imageDataUrl;
             img.alt = getMessage('uiSavedImageThumbnailAlt');
-            
+
             const delBtn = document.createElement('button');
             delBtn.className = 'thumb-delete';
             delBtn.innerHTML = '<span class="material-symbols-rounded" style="font-size:16px">close</span>';
@@ -301,7 +292,7 @@ function renderActiveGroupState(container, model) {
                 await sendRuntimeMessage(MESSAGE_TYPES.DELETE_SCREENSHOT, { id: screenshot.id });
                 refreshUi();
             });
-            
+
             const meta = document.createElement('span');
             meta.className = 'thumb-meta';
             meta.textContent = new Date(screenshot.timestamp).toLocaleString();
