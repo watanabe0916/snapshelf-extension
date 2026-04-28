@@ -30,14 +30,20 @@ const ACTION_TYPES = {
 
 const STORAGE_KEYS = {
     IS_UI_OPEN: 'isUiOpen',
-    UI_POSITION: 'uiPosition',
     UI_PANEL_HEIGHT: 'uiPanelHeight',
+    UI_PANEL_WIDTH: 'uiPanelWidth',  
+    UI_PANEL_LEFT: 'uiPanelLeft',    
+    UI_PANEL_TOP: 'uiPanelTop',
+    UI_PANEL_LEFT: 'uiPanelLeft', 
+    UI_PANEL_TOP: 'uiPanelTop',
     ACTIVE_GROUP_ID: 'activeGroupId',
     ACTIVE_SHELF_ID: 'activeShelfId',
     GROUPS_METADATA: 'groupsMetadata',
 };
 
 const MIN_SELECTION_SIZE = 1;
+const MIN_PANEL_WIDTH = 340;
+const MIN_PANEL_HEIGHT = 200;
 const CAPTURE_DELAY_MS = 120;
 // Temporary thresholds for verification; switch to 5000/10000 for production.
 const SCREENSHOT_WARNING_THRESHOLD = 5000;
@@ -69,6 +75,8 @@ let isActiveShelfStateInitialized = false;
 const uiState = {
     hostElement: null,
     uiPanelHeight: null,
+    uiPanelLeft: null,
+    uiPanelTop: null,
     shadowRoot: null,
     panelElement: null,
     isUiOpen: false,
@@ -82,10 +90,23 @@ const uiState = {
     dismissedStorageWarningLevel: null,
 };
 
+const moveState = {
+    isMoving: false,
+    startX: 0,
+    startY: 0,
+    initialLeft: 0,
+    initialTop: 0,
+};
+
 const resizeState = {
     isResizing: false,
+    direction: '',
+    startX: 0,
     startY: 0,
+    startWidth: 0,
     startHeight: 0,
+    startLeft: 0,
+    startTop: 0,
 };
 
 function getLocalStorage(keys) {
@@ -292,34 +313,101 @@ function revokeAllObjectUrls() {
 }
 
 function applyUiHostPosition() {
-    if (!uiState.hostElement) {
-        return;
+    if (!uiState.hostElement || !uiState.panelElement) return;
+
+    uiState.hostElement.style.position = 'fixed';
+    uiState.hostElement.style.bottom = 'auto';
+    uiState.hostElement.style.right = 'auto';
+    uiState.hostElement.style.width = 'max-content';
+
+    let width = uiState.uiPanelWidth || 420;
+    let height = uiState.uiPanelHeight || 200;
+    let left = uiState.uiPanelLeft;
+    let top = uiState.uiPanelTop;
+
+    // 座標が未保存の場合は、画面下部の中央に配置
+    if (left === null || top === null) {
+        left = Math.max(0, (window.innerWidth - width) / 2);
+        top = Math.max(0, window.innerHeight - height - 20); // 画面下から20px浮かす
     }
 
-    if (uiState.uiPosition === 'top') {
-        uiState.hostElement.style.top = '8px';
-        uiState.hostElement.style.bottom = '';
-    } else {
-        uiState.hostElement.style.top = '';
-        uiState.hostElement.style.bottom = '8px';
-    }
-
-    if (uiState.panelElement) {
-        if (uiState.uiPanelHeight) {
-            uiState.panelElement.style.height = `${uiState.uiPanelHeight}px`;
-        } else {
-            uiState.panelElement.style.height = ''; 
-        }
-    }
+    uiState.hostElement.style.left = `${left}px`;
+    uiState.hostElement.style.top = `${top}px`;
+    uiState.panelElement.style.width = `${width}px`;
+    uiState.panelElement.style.height = `${height}px`;
 }
 
-function handlePanelResizeStart(event) {
-    if (event.button !== 0 || event.target.closest('button, input')) {
-        return;
-    }
+// === ウィンドウ移動処理 ===
+function handlePanelMoveStart(event) {
+    // 左クリック以外、またはボタンやリサイズ枠をクリックした場合は無視
+    if (event.button !== 0 || event.target.closest('button, input, .resizer')) return;
     
+    moveState.isMoving = true;
+    moveState.startX = event.clientX;
+    moveState.startY = event.clientY;
+    
+    const rect = uiState.hostElement.getBoundingClientRect();
+    moveState.initialLeft = rect.left;
+    moveState.initialTop = rect.top;
+
+    document.body.style.userSelect = 'none';
+
+    window.addEventListener('mousemove', handlePanelMove);
+    window.addEventListener('mouseup', handlePanelMoveEnd);
+}
+
+function handlePanelMove(event) {
+    if (!moveState.isMoving) return;
+    event.preventDefault();
+
+    const deltaX = event.clientX - moveState.startX;
+    const deltaY = event.clientY - moveState.startY;
+
+    let newLeft = moveState.initialLeft + deltaX;
+    let newTop = moveState.initialTop + deltaY;
+
+    // 画面外への飛び出し防止
+    const hostRect = uiState.hostElement.getBoundingClientRect();
+    newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - hostRect.width));
+    newTop = Math.max(0, Math.min(newTop, window.innerHeight - hostRect.height));
+
+    uiState.hostElement.style.left = `${newLeft}px`;
+    uiState.hostElement.style.top = `${newTop}px`;
+}
+
+async function handlePanelMoveEnd(event) {
+    if (!moveState.isMoving) return;
+    moveState.isMoving = false;
+    document.body.style.userSelect = '';
+
+    window.removeEventListener('mousemove', handlePanelMove);
+    window.removeEventListener('mouseup', handlePanelMoveEnd);
+
+    const rect = uiState.hostElement.getBoundingClientRect();
+    uiState.uiPanelLeft = rect.left;
+    uiState.uiPanelTop = rect.top;
+
+    await setLocalStorage({
+        [STORAGE_KEYS.UI_PANEL_LEFT]: rect.left,
+        [STORAGE_KEYS.UI_PANEL_TOP]: rect.top
+    });
+}
+
+// === ウィンドウサイズ変更処理 ===
+function handlePanelResizeStart(event, direction) {
+    if (event.button !== 0) return;
+    event.stopPropagation();
+
     resizeState.isResizing = true;
+    resizeState.direction = direction;
+    resizeState.startX = event.clientX;
     resizeState.startY = event.clientY;
+
+    const hostRect = uiState.hostElement.getBoundingClientRect();
+    resizeState.startLeft = hostRect.left;
+    resizeState.startTop = hostRect.top;
+    
+    resizeState.startWidth = uiState.panelElement.offsetWidth;
     resizeState.startHeight = uiState.panelElement.offsetHeight;
 
     document.body.style.userSelect = 'none';
@@ -329,34 +417,71 @@ function handlePanelResizeStart(event) {
 }
 
 function handlePanelResizeMove(event) {
-    if (!resizeState.isResizing || !uiState.panelElement) return;
-
+    if (!resizeState.isResizing) return;
     event.preventDefault();
-    const deltaY = event.clientY - resizeState.startY;
-    let newHeight;
 
-    if (uiState.uiPosition === 'bottom') {
-        newHeight = resizeState.startHeight - deltaY;
-    } else {
-        newHeight = resizeState.startHeight + deltaY;
+    const dx = event.clientX - resizeState.startX;
+    const dy = event.clientY - resizeState.startY;
+
+    let newWidth = resizeState.startWidth;
+    let newHeight = resizeState.startHeight;
+    let newLeft = resizeState.startLeft;
+    let newTop = resizeState.startTop;
+
+    const dir = resizeState.direction;
+
+    if (dir.includes('e')) newWidth = resizeState.startWidth + dx;
+    if (dir.includes('s')) newHeight = resizeState.startHeight + dy;
+    if (dir.includes('w')) {
+        newWidth = resizeState.startWidth - dx;
+        newLeft = resizeState.startLeft + dx;
+    }
+    if (dir.includes('n')) {
+        newHeight = resizeState.startHeight - dy;
+        newTop = resizeState.startTop + dy;
     }
 
-    uiState.panelElement.style.height = `${Math.max(180, newHeight)}px`;
+    // 最小サイズの制限
+    if (newWidth < MIN_PANEL_WIDTH) {
+        if (dir.includes('w')) newLeft -= (MIN_PANEL_WIDTH - newWidth);
+        newWidth = MIN_PANEL_WIDTH;
+    }
+    if (newHeight < MIN_PANEL_HEIGHT) {
+        if (dir.includes('n')) newTop -= (MIN_PANEL_HEIGHT - newHeight);
+        newHeight = MIN_PANEL_HEIGHT;
+    }
+
+    uiState.panelElement.style.width = `${newWidth}px`;
+    uiState.panelElement.style.height = `${newHeight}px`;
+    uiState.hostElement.style.left = `${newLeft}px`;
+    uiState.hostElement.style.top = `${newTop}px`;
 }
 
 async function handlePanelResizeEnd(event) {
     if (!resizeState.isResizing) return;
-
     resizeState.isResizing = false;
-    document.body.style.userSelect = ''; 
+    document.body.style.userSelect = '';
 
     window.removeEventListener('mousemove', handlePanelResizeMove);
     window.removeEventListener('mouseup', handlePanelResizeEnd);
 
-    if (uiState.panelElement) {
+    if (uiState.panelElement && uiState.hostElement) {
+        const finalWidth = uiState.panelElement.offsetWidth;
         const finalHeight = uiState.panelElement.offsetHeight;
+        const finalLeft = parseFloat(uiState.hostElement.style.left) || 0;
+        const finalTop = parseFloat(uiState.hostElement.style.top) || 0;
+
+        uiState.uiPanelWidth = finalWidth;
         uiState.uiPanelHeight = finalHeight;
-        await setLocalStorage({ [STORAGE_KEYS.UI_PANEL_HEIGHT]: finalHeight });
+        uiState.uiPanelLeft = finalLeft;
+        uiState.uiPanelTop = finalTop;
+
+        await setLocalStorage({
+            [STORAGE_KEYS.UI_PANEL_WIDTH]: finalWidth,
+            [STORAGE_KEYS.UI_PANEL_HEIGHT]: finalHeight,
+            [STORAGE_KEYS.UI_PANEL_LEFT]: finalLeft,
+            [STORAGE_KEYS.UI_PANEL_TOP]: finalTop
+        });
     }
 }
 
@@ -403,8 +528,11 @@ function ensureUiHost() {
 			pointer-events: auto;
 			color: var(--ink);
 			font-family: "Avenir Next", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
-			width: min(100%, 1060px);
-			margin-inline: auto;
+			position: relative; /* リサイズハンドルの基準として追加 */
+			width: 420px; /* デフォルト幅 */
+			min-width: 340px; /* 最小幅 */
+			min-height: 200px;
+			/*margin-inline: auto;*/
 			border: 1px solid var(--line);
 			border-radius: 18px;
 			background: linear-gradient(155deg, #fff8ec 0%, #eef5ff 52%, #f4fff9 100%);
@@ -413,15 +541,17 @@ function ensureUiHost() {
 			display: flex;
 			flex-direction: column;
             min-height: 200px;
-            max-height: 80vh;
+            max-height: 85vh;
 			overflow: hidden;
+            width: min(90vw, 420px); 
+            margin: 0;
 		}
 
 		.panel-header {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-            cursor: ns-resize;
+            cursor: grab;
             user-select: none;
             padding: 3px 8px;
 			border-bottom: 1px solid var(--line);
@@ -430,6 +560,23 @@ function ensureUiHost() {
 			font-weight: 700;
 			letter-spacing: 0.02em;
 		}
+
+        .panel-header:active {
+            cursor: grabbing; /* ドラッグ中は掴むカーソル */
+        }
+
+        .resizer {
+            position: absolute;
+            z-index: 10;
+        }
+        .resizer-n { top: 0; left: 10px; right: 10px; height: 6px; cursor: ns-resize; }
+        .resizer-s { bottom: 0; left: 10px; right: 10px; height: 6px; cursor: ns-resize; }
+        .resizer-e { top: 10px; bottom: 10px; right: 0; width: 6px; cursor: ew-resize; }
+        .resizer-w { top: 10px; bottom: 10px; left: 0; width: 6px; cursor: ew-resize; }
+        .resizer-nw { top: 0; left: 0; width: 10px; height: 10px; cursor: nwse-resize; }
+        .resizer-ne { top: 0; right: 0; width: 10px; height: 10px; cursor: nesw-resize; }
+        .resizer-sw { bottom: 0; left: 0; width: 10px; height: 10px; cursor: nesw-resize; }
+        .resizer-se { bottom: 0; right: 0; width: 10px; height: 10px; cursor: nwse-resize; }
 
         .panel-body {
             padding: 3px;
@@ -1418,7 +1565,7 @@ function renderUiPanel() {
     const header = document.createElement('header');
     header.className = 'panel-header';
 
-    header.addEventListener('mousedown', handlePanelResizeStart);
+    header.addEventListener('mousedown', handlePanelMoveStart);
 
     const title = document.createElement('span');
     title.className = 'panel-title';
@@ -1426,11 +1573,6 @@ function renderUiPanel() {
 
     const headerActions = document.createElement('div');
     headerActions.className = 'panel-header-actions';
-
-    const positionLabel = document.createElement('span');
-    positionLabel.className = 'panel-pos';
-    positionLabel.textContent =
-        uiState.uiPosition === 'top' ? i18nMessage('uiDockedTop') : i18nMessage('uiDockedBottom');
 
     const closePanelButton = createButton('×', 'panel-close', () => {
         void closeUiPanelFromUserAction().catch((error) => {
@@ -1440,7 +1582,15 @@ function renderUiPanel() {
     closePanelButton.title = i18nMessage('uiButtonClose');
     closePanelButton.setAttribute('aria-label', i18nMessage('uiButtonClose'));
 
-    headerActions.append(positionLabel, closePanelButton);
+    headerActions.append(closePanelButton);
+
+    const directions = ['n', 's', 'e', 'w', 'nw', 'ne', 'sw', 'se'];
+    directions.forEach(dir => {
+        const resizer = document.createElement('div');
+        resizer.className = `resizer resizer-${dir}`;
+        resizer.addEventListener('mousedown', (e) => handlePanelResizeStart(e, dir));
+        panel.appendChild(resizer);
+    });
 
     header.append(title, headerActions);
     panel.appendChild(header);
@@ -1600,6 +1750,19 @@ function handleStorageChanged(changes, areaName) {
     ) {
         void refreshAndRenderUi();
     }
+
+    if (Object.prototype.hasOwnProperty.call(changes, STORAGE_KEYS.UI_PANEL_LEFT) ||
+        Object.prototype.hasOwnProperty.call(changes, STORAGE_KEYS.UI_PANEL_TOP) ||
+        Object.prototype.hasOwnProperty.call(changes, STORAGE_KEYS.UI_PANEL_WIDTH) ||
+        Object.prototype.hasOwnProperty.call(changes, STORAGE_KEYS.UI_PANEL_HEIGHT)) {
+        
+        if (changes[STORAGE_KEYS.UI_PANEL_LEFT]) uiState.uiPanelLeft = changes[STORAGE_KEYS.UI_PANEL_LEFT].newValue;
+        if (changes[STORAGE_KEYS.UI_PANEL_TOP]) uiState.uiPanelTop = changes[STORAGE_KEYS.UI_PANEL_TOP].newValue;
+        if (changes[STORAGE_KEYS.UI_PANEL_WIDTH]) uiState.uiPanelWidth = changes[STORAGE_KEYS.UI_PANEL_WIDTH].newValue;
+        if (changes[STORAGE_KEYS.UI_PANEL_HEIGHT]) uiState.uiPanelHeight = changes[STORAGE_KEYS.UI_PANEL_HEIGHT].newValue;
+        
+        applyUiHostPosition();
+    }
 }
 
 function handleRuntimeMessage(message, _sender, sendResponse) {
@@ -1653,11 +1816,21 @@ function handleRuntimeMessage(message, _sender, sendResponse) {
 
 async function initializeUiState() {
     try {
-        const values = await getLocalStorage([STORAGE_KEYS.IS_UI_OPEN, STORAGE_KEYS.UI_POSITION, STORAGE_KEYS.UI_PANEL_HEIGHT]);
-        uiState.uiPosition = normalizeUiPosition(values[STORAGE_KEYS.UI_POSITION]);
-        uiState.uiPanelHeight = values[STORAGE_KEYS.UI_PANEL_HEIGHT] || null;
+        // STORAGE_KEYS を経由せず直接文字列の配列を渡す
+        const values = await getLocalStorage([
+            'isUiOpen', 
+            'uiPanelHeight',
+            'uiPanelWidth',
+            'uiPanelLeft',
+            'uiPanelTop'
+        ]);
         
-        if (values[STORAGE_KEYS.IS_UI_OPEN]) {
+        uiState.uiPanelHeight = values['uiPanelHeight'] || null;
+        uiState.uiPanelWidth = values['uiPanelWidth'] || null;
+        uiState.uiPanelLeft = values['uiPanelLeft'] ?? null;
+        uiState.uiPanelTop = values['uiPanelTop'] ?? null;
+
+        if (values['isUiOpen']) {
             await openUiPanel();
         }
     } catch (error) {
