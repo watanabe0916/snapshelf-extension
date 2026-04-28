@@ -1,3 +1,4 @@
+// panel.js を以下にすべて置き換えてください。
 const MESSAGE_TYPES = {
     GET_UI_MODEL: 'CLIPSHELF_GET_UI_MODEL',
     CREATE_GROUP: 'CLIPSHELF_CREATE_GROUP',
@@ -8,6 +9,10 @@ const MESSAGE_TYPES = {
     DELETE_SCREENSHOT: 'CLIPSHELF_DELETE_SCREENSHOT',
 };
 
+const ACTION_TYPES = {
+    OPEN_OR_SWITCH_TAB: 'openOrSwitchTab',
+};
+
 const uiState = {
     model: null,
     editingGroupId: null,
@@ -15,7 +20,6 @@ const uiState = {
     lightboxUrl: null
 };
 
-// ウィンドウが閉じられる直前に、現在の位置とサイズをストレージに保存する
 window.addEventListener('beforeunload', () => {
     chrome.storage.local.set({
         uiPanelLeft: window.screenX,
@@ -25,6 +29,10 @@ window.addEventListener('beforeunload', () => {
     });
 });
 
+function getMessage(key, substitutions) {
+    return chrome.i18n.getMessage(key, substitutions) || key;
+}
+
 function sendRuntimeMessage(type, payload = {}) {
     return new Promise((resolve, reject) => {
         chrome.runtime.sendMessage({ type, ...payload }, (response) => {
@@ -33,7 +41,7 @@ function sendRuntimeMessage(type, payload = {}) {
                 return;
             }
             if (!response || response.ok !== true) {
-                reject(new Error(response?.error || '通信エラーが発生しました'));
+                reject(new Error(response?.error || getMessage('uiErrorBackgroundRequestFailed')));
                 return;
             }
             resolve(response.data);
@@ -50,6 +58,7 @@ function createButton(label, className, onClick) {
     return btn;
 }
 
+// openLightbox 関数を完全に上書き
 function openLightbox(screenshot) {
     const container = document.body;
     const overlay = document.createElement('div');
@@ -60,17 +69,45 @@ function openLightbox(screenshot) {
 
     const image = document.createElement('img');
     image.className = 'lightbox-image';
-    image.src = screenshot.imageDataUrl || URL.createObjectURL(screenshot.imageBlob);
+    image.src = screenshot.imageDataUrl;
+    image.alt = getMessage('uiSavedImageAlt');
 
-    const closeBtn = createButton('×', 'lightbox-close', () => {
+    // ボタン配置用のコンテナ
+    const actions = document.createElement('div');
+    actions.className = 'lightbox-actions';
+
+    // リンクを開くボタン
+    const openLinkBtn = createButton(getMessage('uiButtonOpenLink'), 'btn lightbox-open-link', async (e) => {
+        e.stopPropagation();
+        if (screenshot.pageUrl) {
+            // 背景スクリプトの既存の openOrSwitchTab 機能を呼び出す
+            chrome.runtime.sendMessage({
+                action: ACTION_TYPES.OPEN_OR_SWITCH_TAB,
+                url: screenshot.pageUrl
+            });
+        }
+    });
+    openLinkBtn.title = getMessage('uiButtonOpenLink');
+
+    // URLがない場合は無効化
+    if (!screenshot.pageUrl) {
+        openLinkBtn.disabled = true;
+    }
+
+    // 閉じるボタン
+    const closeBtn = createButton('×', 'lightbox-close', (e) => {
+        e.stopPropagation();
         overlay.remove();
     });
+    closeBtn.title = getMessage('uiButtonClose');
 
     overlay.addEventListener('click', (e) => {
         if (e.target === overlay) overlay.remove();
     });
 
-    inner.append(image, closeBtn);
+    // 配置
+    actions.append(openLinkBtn, closeBtn);
+    inner.append(image, actions);
     overlay.appendChild(inner);
     container.appendChild(overlay);
 }
@@ -78,15 +115,15 @@ function openLightbox(screenshot) {
 function renderNoActiveGroupState(container, model) {
     const createSection = document.createElement('section');
     createSection.className = 'section';
-    createSection.innerHTML = `<h3 class="section-title">新しい棚を作成</h3>`;
+    createSection.innerHTML = `<h3 class="section-title">${getMessage('uiCreateNewShelfTitle')}</h3>`;
 
     const row = document.createElement('div');
     row.className = 'inline-row';
     const input = document.createElement('input');
     input.className = 'input';
-    input.placeholder = '棚の名前を入力...';
+    input.placeholder = getMessage('uiEnterShelfNamePlaceholder');
     
-    const btn = createButton('作成', 'btn', async () => {
+    const btn = createButton(getMessage('uiButtonCreate'), 'btn', async () => {
         try {
             await sendRuntimeMessage(MESSAGE_TYPES.CREATE_GROUP, { name: input.value });
             refreshUi();
@@ -100,10 +137,10 @@ function renderNoActiveGroupState(container, model) {
 
     const listSection = document.createElement('section');
     listSection.className = 'section scrollable';
-    listSection.innerHTML = `<h3 class="section-title">棚一覧</h3>`;
+    listSection.innerHTML = `<h3 class="section-title">${getMessage('uiShelvesTitle')}</h3>`;
 
     if (!model.groups || model.groups.length === 0) {
-        listSection.innerHTML += `<p class="empty">棚がありません</p>`;
+        listSection.innerHTML += `<p class="empty">${getMessage('uiNoShelvesYet')}</p>`;
     } else {
         const list = document.createElement('div');
         list.className = 'group-list';
@@ -115,13 +152,13 @@ function renderNoActiveGroupState(container, model) {
                 const rInput = document.createElement('input');
                 rInput.className = 'rename-input';
                 rInput.value = group.name;
-                const saveBtn = createButton('保存', 'btn', async (e) => {
+                const saveBtn = createButton(getMessage('uiButtonSave'), 'btn', async (e) => {
                     e.stopPropagation();
                     await sendRuntimeMessage(MESSAGE_TYPES.RENAME_GROUP, { groupId: group.id, name: rInput.value });
                     uiState.editingGroupId = null;
                     refreshUi();
                 });
-                const cancelBtn = createButton('キャンセル', 'btn secondary', (e) => {
+                const cancelBtn = createButton(getMessage('uiButtonCancel'), 'btn secondary', (e) => {
                     e.stopPropagation();
                     uiState.editingGroupId = null;
                     refreshUi();
@@ -129,15 +166,15 @@ function renderNoActiveGroupState(container, model) {
                 item.append(rInput, saveBtn, cancelBtn);
             } else {
                 const nameArea = document.createElement('div');
-                nameArea.innerHTML = `<span class="group-name">${group.name}</span><span class="count-pill">${group.count} 枚</span>`;
+                nameArea.innerHTML = `<span class="group-name">${group.name}</span><span class="count-pill">${getMessage('uiGroupImageCount', [String(group.count || 0)])}</span>`;
                 
                 const controls = document.createElement('div');
                 controls.className = 'group-controls';
                 controls.append(
-                    createButton('名前変更', 'btn secondary', (e) => { e.stopPropagation(); uiState.editingGroupId = group.id; refreshUi(); }),
-                    createButton('削除', 'btn danger', async (e) => {
+                    createButton(getMessage('uiButtonRename'), 'btn secondary', (e) => { e.stopPropagation(); uiState.editingGroupId = group.id; refreshUi(); }),
+                    createButton(getMessage('uiButtonDeleteShelf'), 'btn danger', async (e) => {
                         e.stopPropagation();
-                        if (confirm('この棚を削除しますか？')) {
+                        if (confirm(getMessage('uiConfirmDeleteShelf'))) {
                             await sendRuntimeMessage(MESSAGE_TYPES.DELETE_GROUP, { groupId: group.id });
                             refreshUi();
                         }
@@ -163,35 +200,43 @@ function renderActiveGroupState(container, model) {
     const titleRow = document.createElement('div');
     titleRow.className = 'inline-row active-group-row';
 
-    const endBtn = createButton('保存を終了', 'btn secondary', async () => {
+    const endBtn = createButton(getMessage('uiButtonStopSaving'), 'btn secondary', async () => {
         await sendRuntimeMessage(MESSAGE_TYPES.END_SAVE_MODE);
         refreshUi();
     });
     
+    const deleteBtn = createButton(getMessage('uiButtonDeleteShelf'), 'btn danger', async () => {
+        if (confirm(getMessage('uiConfirmDeleteShelf'))) {
+            await sendRuntimeMessage(MESSAGE_TYPES.DELETE_GROUP, { groupId: activeGroup.id });
+            refreshUi();
+        }
+    });
+
     if (uiState.editingGroupId === activeGroup.id) {
         const rInput = document.createElement('input');
         rInput.className = 'rename-input';
         rInput.value = activeGroup.name;
-        const saveBtn = createButton('保存', 'btn', async () => {
+        const saveBtn = createButton(getMessage('uiButtonSave'), 'btn', async () => {
             await sendRuntimeMessage(MESSAGE_TYPES.RENAME_GROUP, { groupId: activeGroup.id, name: rInput.value });
             uiState.editingGroupId = null;
             refreshUi();
         });
-        const cancelBtn = createButton('キャンセル', 'btn secondary', () => {
+        const cancelBtn = createButton(getMessage('uiButtonCancel'), 'btn secondary', () => {
             uiState.editingGroupId = null;
             refreshUi();
         });
-        titleRow.append(rInput, saveBtn, cancelBtn, endBtn);
+        titleRow.append(rInput, saveBtn, cancelBtn, endBtn, deleteBtn);
     } else {
         const meta = document.createElement('div');
         meta.className = 'active-group-meta';
-        meta.innerHTML = `<strong class="group-name">${activeGroup.name}</strong><span class="count-pill">${activeGroup.count} 枚</span>`;
+        meta.innerHTML = `<strong class="group-name">${activeGroup.name}</strong><span class="count-pill">${getMessage('uiGroupImageCount', [String(activeGroup.count || 0)])}</span>`;
         
         const actions = document.createElement('div');
         actions.className = 'active-group-actions';
         actions.append(
-            createButton('名前変更', 'btn secondary', () => { uiState.editingGroupId = activeGroup.id; refreshUi(); }),
-            endBtn
+            createButton(getMessage('uiButtonRename'), 'btn secondary', () => { uiState.editingGroupId = activeGroup.id; refreshUi(); }),
+            endBtn,
+            deleteBtn
         );
         titleRow.append(meta, actions);
     }
@@ -200,10 +245,10 @@ function renderActiveGroupState(container, model) {
 
     const screenshotsSection = document.createElement('section');
     screenshotsSection.className = 'section scrollable';
-    screenshotsSection.innerHTML = `<h3 class="section-title">保存済み画像</h3>`;
+    screenshotsSection.innerHTML = `<h3 class="section-title">${getMessage('uiSavedImagesTitle')}</h3>`;
 
     if (!model.screenshots || model.screenshots.length === 0) {
-        screenshotsSection.innerHTML += `<p class="empty">画像がありません</p>`;
+        screenshotsSection.innerHTML += `<p class="empty">${getMessage('uiNoImagesInShelf')}</p>`;
     } else {
         const scroll = document.createElement('div');
         scroll.className = 'thumb-scroll';
@@ -216,12 +261,14 @@ function renderActiveGroupState(container, model) {
             
             const img = document.createElement('img');
             img.src = screenshot.imageDataUrl;
+            img.alt = getMessage('uiSavedImageThumbnailAlt');
             
             const delBtn = createButton('×', 'thumb-delete', async (e) => {
                 e.stopPropagation();
                 await sendRuntimeMessage(MESSAGE_TYPES.DELETE_SCREENSHOT, { id: screenshot.id });
                 refreshUi();
             });
+            delBtn.title = getMessage('uiDeleteImageTitle');
             
             const meta = document.createElement('span');
             meta.className = 'thumb-meta';
@@ -248,7 +295,13 @@ function renderUi() {
         container.appendChild(err);
     }
 
-    if (!uiState.model) return;
+    if (!uiState.model) {
+        const loadingText = document.createElement('p');
+        loadingText.className = 'empty';
+        loadingText.textContent = getMessage('uiLoadingData');
+        container.appendChild(loadingText);
+        return;
+    }
 
     if (!uiState.model.activeGroupId) {
         renderNoActiveGroupState(container, uiState.model);
@@ -268,10 +321,8 @@ async function refreshUi() {
     renderUi();
 }
 
-// 他のタブで画像が保存された際などに更新する
 chrome.storage.onChanged.addListener((changes, areaName) => {
     if (areaName === 'local') refreshUi();
 });
 
-// 初期化
 refreshUi();

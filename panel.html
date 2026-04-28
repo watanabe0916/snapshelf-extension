@@ -203,13 +203,68 @@
 		.lightbox { position: fixed; inset: 0; background: rgba(8, 15, 29, 0.72); display: grid; place-items: center; padding: 20px; }
 		.lightbox-inner { position: relative; width: min(88vw, 980px); max-height: 86vh; border-radius: 14px; overflow: hidden; background: #fff; border: 1px solid #d6deea; }
 		.lightbox-image { width: 100%; height: auto; max-height: 86vh; object-fit: contain; display: block; }
-		.lightbox-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 999px; background: rgba(15, 23, 42, 0.76); color: #fff; border: none; font-weight: 700; cursor: pointer; }
+		.lightbox-close { 
+            width: 30px; 
+            height: 30px; 
+            border-radius: 999px; 
+            background: rgba(15, 23, 42, 0.76); 
+            color: #fff; 
+            border: 1px solid rgba(255, 255, 255, 0.75); 
+            font-weight: 700; 
+            cursor: pointer; 
+            pointer-events: auto; /* マウスクリックを有効化 */
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+
+        /* 拡大表示内のボタン配置用 */
+        .lightbox-actions {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none; /* 下の画像をクリックできるように */
+        }
+
+        .lightbox-actions .btn {
+            pointer-events: auto; /* ボタンだけはクリック可能に */
+        }
+
+        /* リンクを開くボタン専用スタイル */
+        .lightbox-open-link {
+            background: rgba(15, 23, 42, 0.9);
+            color: #f8fafc;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            font-size: 11px;
+            padding: 6px 12px;
+        }
+
+        /* ホバー時の色変化 */
+        .lightbox-open-link:hover {
+            background: rgba(194, 65, 12, 0.95);
+            border-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(194, 65, 12, 0.3);
+        }
+
+        .lightbox-open-link:disabled {
+            background: rgba(100, 116, 139, 0.6);
+            cursor: not-allowed;
+            border-color: transparent;
+        }
+
+        /* 閉じるボタンのホバーも明示的に追加 */
+        .lightbox-close:hover {
+            background: rgba(194, 65, 12, 0.95);
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
-    <div id="app-container">
-        <p class="empty">読み込み中...</p>
-    </div>
+    <div id="app-container"></div>
     <script src="panel.js"></script>
 </body>
 </html>
