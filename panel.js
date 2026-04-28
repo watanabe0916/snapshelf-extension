@@ -1,4 +1,3 @@
-// panel.js を以下にすべて置き換えてください。
 const MESSAGE_TYPES = {
     GET_UI_MODEL: 'CLIPSHELF_GET_UI_MODEL',
     CREATE_GROUP: 'CLIPSHELF_CREATE_GROUP',
@@ -58,7 +57,16 @@ function createButton(label, className, onClick) {
     return btn;
 }
 
-// openLightbox 関数を完全に上書き
+function createIconButton(iconName, className, onClick, titleText = '') {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = className;
+    btn.title = titleText;
+    btn.innerHTML = `<span class="material-symbols-rounded" style="font-size:18px">${iconName}</span>`;
+    btn.addEventListener('click', onClick);
+    return btn;
+}
+
 function openLightbox(screenshot) {
     const container = document.body;
     const overlay = document.createElement('div');
@@ -72,47 +80,42 @@ function openLightbox(screenshot) {
     image.src = screenshot.imageDataUrl;
     image.alt = getMessage('uiSavedImageAlt');
 
-    // ボタン配置用のコンテナ
     const actions = document.createElement('div');
     actions.className = 'lightbox-actions';
 
-    // リンクを開くボタン
     const openLinkBtn = createButton(getMessage('uiButtonOpenLink'), 'btn lightbox-open-link', (e) => {
         e.stopPropagation();
         if (screenshot.pageUrl) {
-            // 背景スクリプトの既存の openOrSwitchTab 機能を呼び出す
             chrome.runtime.sendMessage({
                 action: ACTION_TYPES.OPEN_OR_SWITCH_TAB,
                 url: screenshot.pageUrl
             });
-
-            // ブラウザのタブ移動完了を待ってから、独立ウィンドウを再度フォーカス（前面へ）する
             setTimeout(() => {
                 chrome.windows.getCurrent((win) => {
                     chrome.windows.update(win.id, { focused: true });
                 });
-            },1); // 0.15秒後に前面へ戻す
+            }, 1);
         }
     });
     openLinkBtn.title = getMessage('uiButtonOpenLink');
 
-    // URLがない場合は無効化
     if (!screenshot.pageUrl) {
         openLinkBtn.disabled = true;
     }
 
-    // 閉じるボタン
-    const closeBtn = createButton('×', 'lightbox-close', (e) => {
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'lightbox-close';
+    closeBtn.title = getMessage('uiButtonClose');
+    closeBtn.innerHTML = '<span class="material-symbols-rounded">close</span>';
+    closeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         overlay.remove();
     });
-    closeBtn.title = getMessage('uiButtonClose');
 
     overlay.addEventListener('click', (e) => {
         if (e.target === overlay) overlay.remove();
     });
 
-    // 配置
     actions.append(openLinkBtn, closeBtn);
     inner.append(image, actions);
     overlay.appendChild(inner);
@@ -122,7 +125,7 @@ function openLightbox(screenshot) {
 function renderNoActiveGroupState(container, model) {
     const createSection = document.createElement('section');
     createSection.className = 'section';
-    createSection.innerHTML = `<h3 class="section-title">${getMessage('uiCreateNewShelfTitle')}</h3>`;
+    createSection.innerHTML = `<h3 class="section-title"><span class="material-symbols-rounded" style="font-size:18px">add_circle</span>${getMessage('uiCreateNewShelfTitle')}</h3>`;
 
     const row = document.createElement('div');
     row.className = 'inline-row';
@@ -130,7 +133,7 @@ function renderNoActiveGroupState(container, model) {
     input.className = 'input';
     input.placeholder = getMessage('uiEnterShelfNamePlaceholder');
     
-    const btn = createButton(getMessage('uiButtonCreate'), 'btn', async () => {
+    const btn = createButton(getMessage('uiButtonCreate'), 'btn primary', async () => {
         try {
             await sendRuntimeMessage(MESSAGE_TYPES.CREATE_GROUP, { name: input.value });
             refreshUi();
@@ -144,7 +147,7 @@ function renderNoActiveGroupState(container, model) {
 
     const listSection = document.createElement('section');
     listSection.className = 'section scrollable';
-    listSection.innerHTML = `<h3 class="section-title">${getMessage('uiShelvesTitle')}</h3>`;
+    listSection.innerHTML = `<h3 class="section-title"><span class="material-symbols-rounded" style="font-size:18px">shelves</span>${getMessage('uiShelvesTitle')}</h3>`;
 
     if (!model.groups || model.groups.length === 0) {
         listSection.innerHTML += `<p class="empty">${getMessage('uiNoShelvesYet')}</p>`;
@@ -159,7 +162,7 @@ function renderNoActiveGroupState(container, model) {
                 const rInput = document.createElement('input');
                 rInput.className = 'rename-input';
                 rInput.value = group.name;
-                const saveBtn = createButton(getMessage('uiButtonSave'), 'btn', async (e) => {
+                const saveBtn = createButton(getMessage('uiButtonSave'), 'btn primary', async (e) => {
                     e.stopPropagation();
                     await sendRuntimeMessage(MESSAGE_TYPES.RENAME_GROUP, { groupId: group.id, name: rInput.value });
                     uiState.editingGroupId = null;
@@ -173,19 +176,25 @@ function renderNoActiveGroupState(container, model) {
                 item.append(rInput, saveBtn, cancelBtn);
             } else {
                 const nameArea = document.createElement('div');
-                nameArea.innerHTML = `<span class="group-name">${group.name}</span><span class="count-pill">${getMessage('uiGroupImageCount', [String(group.count || 0)])}</span>`;
+                nameArea.className = 'active-group-meta';
+                nameArea.innerHTML = `
+                    <span class="material-symbols-rounded shelf-icon">auto_stories</span>
+                    <div style="display:flex; flex-direction:column;">
+                        <span class="group-name">${group.name}</span>
+                        <span class="count-pill">${getMessage('uiGroupImageCount', [String(group.count || 0)])}</span>
+                    </div>`;
                 
                 const controls = document.createElement('div');
                 controls.className = 'group-controls';
                 controls.append(
-                    createButton(getMessage('uiButtonRename'), 'btn secondary', (e) => { e.stopPropagation(); uiState.editingGroupId = group.id; refreshUi(); }),
-                    createButton(getMessage('uiButtonDeleteShelf'), 'btn danger', async (e) => {
+                    createIconButton('edit', 'icon-btn', (e) => { e.stopPropagation(); uiState.editingGroupId = group.id; refreshUi(); }, getMessage('uiButtonRename')),
+                    createIconButton('delete', 'icon-btn danger', async (e) => {
                         e.stopPropagation();
                         if (confirm(getMessage('uiConfirmDeleteShelf'))) {
                             await sendRuntimeMessage(MESSAGE_TYPES.DELETE_GROUP, { groupId: group.id });
                             refreshUi();
                         }
-                    })
+                    }, getMessage('uiButtonDeleteShelf'))
                 );
                 item.append(nameArea, controls);
                 item.addEventListener('click', async () => {
@@ -207,23 +216,16 @@ function renderActiveGroupState(container, model) {
     const titleRow = document.createElement('div');
     titleRow.className = 'inline-row active-group-row';
 
-    const endBtn = createButton(getMessage('uiButtonStopSaving'), 'btn secondary', async () => {
+    const endBtn = createButton(getMessage('uiButtonStopSaving'), 'btn primary', async () => {
         await sendRuntimeMessage(MESSAGE_TYPES.END_SAVE_MODE);
         refreshUi();
-    });
-    
-    const deleteBtn = createButton(getMessage('uiButtonDeleteShelf'), 'btn danger', async () => {
-        if (confirm(getMessage('uiConfirmDeleteShelf'))) {
-            await sendRuntimeMessage(MESSAGE_TYPES.DELETE_GROUP, { groupId: activeGroup.id });
-            refreshUi();
-        }
     });
 
     if (uiState.editingGroupId === activeGroup.id) {
         const rInput = document.createElement('input');
         rInput.className = 'rename-input';
         rInput.value = activeGroup.name;
-        const saveBtn = createButton(getMessage('uiButtonSave'), 'btn', async () => {
+        const saveBtn = createButton(getMessage('uiButtonSave'), 'btn primary', async () => {
             await sendRuntimeMessage(MESSAGE_TYPES.RENAME_GROUP, { groupId: activeGroup.id, name: rInput.value });
             uiState.editingGroupId = null;
             refreshUi();
@@ -232,18 +234,28 @@ function renderActiveGroupState(container, model) {
             uiState.editingGroupId = null;
             refreshUi();
         });
-        titleRow.append(rInput, saveBtn, cancelBtn, endBtn, deleteBtn);
+        titleRow.append(rInput, saveBtn, cancelBtn, endBtn);
     } else {
         const meta = document.createElement('div');
         meta.className = 'active-group-meta';
-        meta.innerHTML = `<strong class="group-name">${activeGroup.name}</strong><span class="count-pill">${getMessage('uiGroupImageCount', [String(activeGroup.count || 0)])}</span>`;
+        meta.innerHTML = `
+            <span class="material-symbols-rounded shelf-icon" style="font-size:32px;">folder_special</span>
+            <div style="display:flex; flex-direction:column;">
+                <strong class="group-name" style="font-size:16px;">${activeGroup.name}</strong>
+                <span class="count-pill">${getMessage('uiGroupImageCount', [String(activeGroup.count || 0)])}</span>
+            </div>`;
         
         const actions = document.createElement('div');
         actions.className = 'active-group-actions';
         actions.append(
-            createButton(getMessage('uiButtonRename'), 'btn secondary', () => { uiState.editingGroupId = activeGroup.id; refreshUi(); }),
-            endBtn,
-            deleteBtn
+            createIconButton('edit', 'icon-btn', () => { uiState.editingGroupId = activeGroup.id; refreshUi(); }, getMessage('uiButtonRename')),
+            createIconButton('delete', 'icon-btn danger', async () => {
+                if (confirm(getMessage('uiConfirmDeleteShelf'))) {
+                    await sendRuntimeMessage(MESSAGE_TYPES.DELETE_GROUP, { groupId: activeGroup.id });
+                    refreshUi();
+                }
+            }, getMessage('uiButtonDeleteShelf')),
+            endBtn
         );
         titleRow.append(meta, actions);
     }
@@ -252,7 +264,7 @@ function renderActiveGroupState(container, model) {
 
     const screenshotsSection = document.createElement('section');
     screenshotsSection.className = 'section scrollable';
-    screenshotsSection.innerHTML = `<h3 class="section-title">${getMessage('uiSavedImagesTitle')}</h3>`;
+    screenshotsSection.innerHTML = `<h3 class="section-title"><span class="material-symbols-rounded" style="font-size:18px">image</span>${getMessage('uiSavedImagesTitle')}</h3>`;
 
     if (!model.screenshots || model.screenshots.length === 0) {
         screenshotsSection.innerHTML += `<p class="empty">${getMessage('uiNoImagesInShelf')}</p>`;
@@ -270,12 +282,15 @@ function renderActiveGroupState(container, model) {
             img.src = screenshot.imageDataUrl;
             img.alt = getMessage('uiSavedImageThumbnailAlt');
             
-            const delBtn = createButton('×', 'thumb-delete', async (e) => {
+            const delBtn = document.createElement('button');
+            delBtn.className = 'thumb-delete';
+            delBtn.innerHTML = '<span class="material-symbols-rounded" style="font-size:16px">close</span>';
+            delBtn.title = getMessage('uiDeleteImageTitle');
+            delBtn.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 await sendRuntimeMessage(MESSAGE_TYPES.DELETE_SCREENSHOT, { id: screenshot.id });
                 refreshUi();
             });
-            delBtn.title = getMessage('uiDeleteImageTitle');
             
             const meta = document.createElement('span');
             meta.className = 'thumb-meta';

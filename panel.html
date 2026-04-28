@@ -3,264 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <title>ClipShelf</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <style>
-		:root {
-			--ink: #1f2933;
-			--muted: #5c6674;
-			--line: #d8e3f3;
-			--card: rgba(255, 255, 255, 0.78);
-			--accent: #0f766e;
-			--accent-strong: #0b5e58;
-			--danger: #c2410c;
-		}
+        :root {
+            --bg-color: #FCFBF9;        /* 柔らかなオフホワイト */
+            --accent: #D67D5C;          /* テラコッタ */
+            --accent-hover: #C16A4B;    /* 濃いテラコッタ */
+            --text-main: #374151;       /* チャコール */
+            --text-muted: #6B7280;      /* グレー */
+            --card-bg: #FFFFFF;
+            --line: #F3F4F6;
+            --radius-lg: 20px;          
+            --radius-md: 14px;
+            --shadow-sm: 0 2px 6px rgba(0,0,0,0.03);
+            --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.03);
+            --danger: #EF4444;
+        }
 
-		*, *::before, *::after {
-			box-sizing: border-box;
-		}
+        *, *::before, *::after { box-sizing: border-box; }
 
-		body {
-			margin: 0;
-			padding: 0;
-			color: var(--ink);
-			font-family: "Avenir Next", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
-			background: linear-gradient(155deg, #fff8ec 0%, #eef5ff 52%, #f4fff9 100%);
-			height: 100vh;
-			display: flex;
-			flex-direction: column;
-			overflow: hidden;
-		}
-
-        /* カスタムスクロールバー */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
-
-		#app-container {
-            padding: 8px;
-            overflow: hidden;
+        body {
+            margin: 0;
+            padding: 16px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: "Outfit", "Segoe UI", "Hiragino Kaku Gothic ProN", sans-serif;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            flex: 1;
-		}
+            overflow: hidden;
+        }
 
-		.section {
-			border: 1px solid var(--line);
-            border-radius: 10px;
-            padding: 6px;
-			background: var(--card);
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #D1D5DB; }
+
+        #app-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .section {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            box-shadow: var(--shadow-md);
             flex: 0 0 auto;
             display: flex;
             flex-direction: column;
-		}
+        }
 
         .section.scrollable {
             flex: 1 1 0;
             min-height: 0;
+            overflow-y: auto;
         }
 
-		.section-title {
-            margin: 0 0 4px;
-            font-size: 12px;
-			color: var(--muted);
-			font-weight: 700;
-            flex-shrink: 0;
-		}
-
-		.inline-row {
-			display: flex;
-			align-items: center;
-            gap: 6px;
-		}
-
-        .active-group-row {
-            justify-content: space-between;
-        }
-
-        .active-group-meta {
+        .section-title {
+            margin: 0 0 12px;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 6px;
-            min-width: 0;
-            flex: 1;
         }
 
-        .active-group-actions {
+        .inline-row {
             display: flex;
-            gap: 4px;
-        }
-
-		.input, .rename-input {
-			flex: 1;
-			border: 1px solid #cdd8e9;
-			border-radius: 6px;
-            padding: 4px 8px;
-            font-size: 12px;
-			color: var(--ink);
-			background: rgba(255, 255, 255, 0.92);
-		}
-
-		.btn {
-			border: 1px solid transparent;
-			border-radius: 6px;
-            padding: 4px 10px;
-            font-size: 12px;
-			font-weight: 700;
-			cursor: pointer;
-			color: #fff;
-			background: var(--accent);
-			white-space: nowrap;
-		}
-		.btn:hover { background: var(--accent-strong); }
-		.btn.secondary { background: #e2e8f0; color: #334155; border-color: #cbd5e1; }
-		.btn.secondary:hover { background: #d6deea; }
-		.btn.danger { background: var(--danger); }
-		.btn.danger:hover { background: #9a3412; }
-
-		.group-list {
-			display: grid;
-            gap: 4px;
-            overflow-y: auto;
-            flex: 1;
-            min-height: 0;
-            align-content: start;
-		}
-
-		.group-item {
-			border: 1px solid #d5dfef;
-			background: rgba(255, 255, 255, 0.9);
-			border-radius: 8px;
-            padding: 6px;
-			display: flex;
-            justify-content: space-between;
             align-items: center;
-			cursor: pointer;
-		}
-		.group-item:hover { border-color: #9fb5d4; background: rgba(255, 255, 255, 0.98); }
-
-		.group-name { font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-		.count-pill { font-size: 11px; border-radius: 999px; padding: 2px 8px; background: rgba(15, 118, 110, 0.14); color: #0b5e58; font-weight: 700; margin-left: 6px; }
-		
-        .group-controls { display: flex; gap: 4px; }
-
-		.thumb-grid {
-			display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 6px;
+            gap: 8px;
         }
 
-        .thumb-scroll {
-            overflow-y: auto;
+        .active-group-row { justify-content: space-between; }
+        .active-group-meta { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
+        .active-group-actions { display: flex; gap: 6px; align-items: center; }
+
+        .input, .rename-input {
             flex: 1;
-            min-height: 0;
-		}
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 13px;
+            background: #F9FAFB;
+            color: var(--text-main);
+            transition: border-color 0.2s;
+        }
+        .input:focus, .rename-input:focus { border-color: var(--accent); outline: none; background: #FFF; }
 
-		.thumb-item {
-			position: relative;
-			border: 1px solid #d6deea;
-			border-radius: 8px;
-			overflow: hidden;
-			background: #ffffff;
-			cursor: pointer;
-		}
+        .btn {
+            border: none;
+            border-radius: 999px;
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn.primary, .btn:not(.secondary):not(.danger):not(.icon-btn) { background: var(--accent); color: #FFF; }
+        .btn.primary:hover, .btn:not(.secondary):not(.danger):not(.icon-btn):hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(214, 125, 92, 0.2); }
+        .btn.secondary { background: #F3F4F6; color: var(--text-main); }
+        .btn.secondary:hover { background: #E5E7EB; }
+        .btn.danger { background: #FEE2E2; color: var(--danger); }
+        .btn.danger:hover { background: #FECACA; }
 
-		.thumb-item img {
-			width: 100%;
-            height: 90px;
-			object-fit: cover;
-			display: block;
-		}
-
-		.thumb-meta {
-			display: block;
-            padding: 4px;
-            font-size: 10px;
-			color: #64748b;
-			white-space: nowrap;
-		}
-
-		.thumb-delete {
-			position: absolute;
-			top: 4px;
-			right: 4px;
-			width: 24px;
-			height: 24px;
-			border-radius: 999px;
-			border: 1px solid rgba(255, 255, 255, 0.75);
-			background: rgba(15, 23, 42, 0.76);
-			color: #fff;
-			font-weight: 700;
-			cursor: pointer;
-			display: grid;
-			place-items: center;
-		}
-		.thumb-delete:hover { background: rgba(194, 65, 12, 0.95); }
-
-		.empty { color: var(--muted); font-size: 12px; margin: 0; }
-		.status-error { border: 1px solid rgba(194, 65, 12, 0.3); color: #9a3412; background: rgba(255, 237, 213, 0.8); border-radius: 6px; padding: 6px; font-size: 12px; font-weight: 600; margin-bottom: 6px; }
-
-		.lightbox { position: fixed; inset: 0; background: rgba(8, 15, 29, 0.72); display: grid; place-items: center; padding: 20px; }
-		.lightbox-inner { position: relative; width: min(88vw, 980px); max-height: 86vh; border-radius: 14px; overflow: hidden; background: #fff; border: 1px solid #d6deea; }
-		.lightbox-image { width: 100%; height: auto; max-height: 86vh; object-fit: contain; display: block; }
-		.lightbox-close { 
-            width: 30px; 
-            height: 30px; 
-            border-radius: 999px; 
-            background: rgba(15, 23, 42, 0.76); 
-            color: #fff; 
-            border: 1px solid rgba(255, 255, 255, 0.75); 
-            font-weight: 700; 
-            cursor: pointer; 
-            pointer-events: auto; /* マウスクリックを有効化 */
-            display: flex; 
-            align-items: center; 
+        /* アイコンボタン（ペンの編集ボタンなど） */
+        .icon-btn {
+            background: #F3F4F6;
+            color: var(--text-muted);
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
             justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
         }
+        .icon-btn:hover { background: #E5E7EB; color: var(--text-main); }
+        .icon-btn.danger:hover { background: #FEE2E2; color: var(--danger); }
+        .shelf-icon { color: var(--accent); font-size: 28px; font-variation-settings: 'FILL' 1; }
 
-        /* 拡大表示内のボタン配置用 */
-        .lightbox-actions {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
+        .group-list { display: grid; gap: 8px; align-content: start; }
+        .group-item {
+            background: #FDFDFD;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            pointer-events: none; /* 下の画像をクリックできるように */
+            cursor: pointer;
+            transition: all 0.2s;
+            gap: 8px;
         }
+        .group-item:hover { border-color: var(--accent); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
 
-        .lightbox-actions .btn {
-            pointer-events: auto; /* ボタンだけはクリック可能に */
-        }
+        .group-name { font-size: 15px; font-weight: 700; }
+        .count-pill { font-size: 11px; color: var(--text-muted); margin-left: 0; }
+        .group-controls { display: flex; gap: 6px; }
 
-        /* リンクを開くボタン専用スタイル */
-        .lightbox-open-link {
-            background: rgba(15, 23, 42, 0.9);
-            color: #f8fafc;
-            border: 1px solid rgba(148, 163, 184, 0.5);
-            font-size: 11px;
-            padding: 6px 12px;
+        .thumb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+        .thumb-scroll { overflow-y: auto; flex: 1; min-height: 0; }
+        .thumb-item {
+            position: relative;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: #F9FAFB;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s;
+            border: 1px solid var(--line);
         }
+        .thumb-item:hover { transform: scale(1.02); }
+        .thumb-item img { width: 100%; height: 100px; object-fit: cover; display: block; }
+        .thumb-meta { display: block; padding: 6px 8px; font-size: 10px; color: var(--text-muted); white-space: nowrap; }
 
-        /* ホバー時の色変化 */
-        .lightbox-open-link:hover {
-            background: rgba(194, 65, 12, 0.95);
-            border-color: #ffffff;
-            box-shadow: 0 4px 12px rgba(194, 65, 12, 0.3);
+        .thumb-delete {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.2s;
         }
+        .thumb-delete:hover { background: var(--danger); color: #FFF; }
 
-        .lightbox-open-link:disabled {
-            background: rgba(100, 116, 139, 0.6);
-            cursor: not-allowed;
-            border-color: transparent;
-        }
+        .empty { color: var(--text-muted); font-size: 13px; margin: 0; text-align: center; padding: 20px; }
+        .status-error { border: 1px solid #FECACA; color: var(--danger); background: #FEF2F2; border-radius: 8px; padding: 10px; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
 
-        /* 閉じるボタンのホバーも明示的に追加 */
-        .lightbox-close:hover {
-            background: rgba(194, 65, 12, 0.95);
-            transform: scale(1.05);
+        /* ライトボックス */
+        .lightbox { position: fixed; inset: 0; background: rgba(25, 25, 25, 0.8); backdrop-filter: blur(4px); display: grid; place-items: center; padding: 20px; z-index: 100; }
+        .lightbox-inner { position: relative; width: min(90vw, 1000px); max-height: 90vh; border-radius: var(--radius-lg); overflow: hidden; background: transparent; }
+        .lightbox-image { width: 100%; height: auto; max-height: 90vh; object-fit: contain; display: block; border-radius: var(--radius-lg); }
+        
+        .lightbox-actions { position: absolute; top: 16px; left: 16px; right: 16px; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
+        .lightbox-actions .btn, .lightbox-close { pointer-events: auto; }
+
+        .lightbox-open-link { background: rgba(255, 255, 255, 0.9); color: var(--text-main); font-size: 13px; padding: 8px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .lightbox-open-link:hover { background: var(--accent); color: #FFF; }
+        .lightbox-open-link:disabled { background: rgba(255, 255, 255, 0.5); cursor: not-allowed; }
+
+        .lightbox-close {
+            width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.9); color: var(--text-main);
+            border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.2s;
         }
+        .lightbox-close:hover { background: var(--danger); color: #FFF; transform: scale(1.05); }
     </style>
 </head>
 <body>
