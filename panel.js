@@ -135,7 +135,7 @@ function openLightbox(screenshot) {
 function renderNoActiveGroupState(container, model) {
     const createSection = document.createElement('section');
     createSection.className = 'section';
-    createSection.innerHTML = `<h3 class="section-title"><span class="material-symbols-rounded" style="font-size:18px">add_circle</span>${getMessage('uiCreateNewShelfTitle')}</h3>`;
+    createSection.innerHTML = `<h3 class="section-title"><span class="material-symbols-rounded" style="font-size:23px">add_circle</span>${getMessage('uiCreateNewShelfTitle')}</h3>`;
 
     const row = document.createElement('div');
     row.className = 'inline-row';
@@ -157,7 +157,7 @@ function renderNoActiveGroupState(container, model) {
 
     const listSection = document.createElement('section');
     listSection.className = 'section scrollable';
-    listSection.innerHTML = `<h3 class="section-title"><span class="material-symbols-rounded" style="font-size:18px">shelves</span>${getMessage('uiShelvesTitle')}</h3>`;
+    listSection.innerHTML = `<h3 class="section-title"><span class="material-symbols-rounded" style="font-size:23px">shelves</span>${getMessage('uiShelvesTitle')}</h3>`;
 
     if (!model.groups || model.groups.length === 0) {
         listSection.innerHTML += `<p class="empty">${getMessage('uiNoShelvesYet')}</p>`;
@@ -188,7 +188,7 @@ function renderNoActiveGroupState(container, model) {
                 const nameArea = document.createElement('div');
                 nameArea.className = 'active-group-meta';
                 nameArea.innerHTML = `
-                    <span class="material-symbols-rounded shelf-icon">auto_stories</span>
+                    <span class="material-symbols-rounded shelf-icon">library_books</span>
                     <div style="display:flex; flex-direction:column;">
                         <span class="group-name">${group.name}</span>
                         <span class="count-pill">${getMessage('uiGroupImageCount', [String(group.count || 0)])}</span>
@@ -249,7 +249,7 @@ function renderActiveGroupState(container, model) {
         const meta = document.createElement('div');
         meta.className = 'active-group-meta';
         meta.innerHTML = `
-            <span class="material-symbols-rounded shelf-icon" style="font-size:32px;">folder_special</span>
+            <span class="material-symbols-rounded shelf-icon" style="font-size:32px;">library_books</span>
             <div style="display:flex; flex-direction:column;">
                 <strong class="group-name" style="font-size:16px;">${activeGroup.name}</strong>
                 <span class="count-pill">${getMessage('uiGroupImageCount', [String(activeGroup.count || 0)])}</span>
