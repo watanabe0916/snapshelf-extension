@@ -668,40 +668,70 @@ function isNoReceiverError(error) {
     );
 }
 
-async function toggleUiInActiveTab() {
-    const activeTabs = await queryTabs({ active: true, currentWindow: true });
-    const activeTab = activeTabs.find((tab) => Number.isInteger(tab?.id));
+// === 独立ウィンドウ管理 ===
+let uiWindowId = null;
 
-    if (!activeTab || !Number.isInteger(activeTab.id)) {
-        return { toggled: false, reason: 'no-active-tab' };
-    }
-
-    try {
-        const response = await sendMessageToTabWithResponse(activeTab.id, {
-            action: ACTION_TYPES.TOGGLE_UI,
-        });
-        return response;
-    } catch (error) {
-        if (!isNoReceiverError(error)) {
-            throw error;
+async function toggleUiWindow() {
+    // 既にウィンドウが開いている場合はフォーカスする
+    if (uiWindowId !== null) {
+        try {
+            await focusWindow(uiWindowId);
+            return { toggled: true, action: 'focused' };
+        } catch (e) {
+            uiWindowId = null; // ウィンドウが手動で閉じられていた場合
         }
-
-        await executeScriptOnTab(activeTab.id, {
-            func: (flagName) => {
-                globalThis[flagName] = true;
-            },
-            args: [CONTENT_INITIAL_UI_SKIP_FLAG],
-        });
-
-        await executeScriptOnTab(activeTab.id, {
-            files: ['content.js'],
-        });
-
-        return sendMessageToTabWithResponse(activeTab.id, {
-            action: ACTION_TYPES.TOGGLE_UI,
-        });
     }
+
+    // 保存されている位置とサイズを取得
+    const state = await getStorage(['uiPanelLeft', 'uiPanelTop', 'uiPanelWidth', 'uiPanelHeight']);
+    const width = state.uiPanelWidth || 420;
+    const height = state.uiPanelHeight || 600;
+    let left = state.uiPanelLeft;
+    let top = state.uiPanelTop;
+
+    // パラメータを整数に変換して構成
+    const createData = {
+        url: chrome.runtime.getURL('panel.html'),
+        type: 'popup',
+        width: Math.round(width),
+        height: Math.round(height)
+    };
+
+    if (left !== undefined && left !== null) {
+        createData.left = Math.round(left);
+    }
+    if (top !== undefined && top !== null) {
+        createData.top = Math.round(top);
+    }
+
+    // 独立ウィンドウを作成して開く
+    const win = await new Promise((resolve, reject) => {
+        chrome.windows.create(createData, (window) => {
+            if (chrome.runtime.lastError) reject(new Error(chrome.runtime.lastError.message));
+            else resolve(window);
+        });
+    });
+
+    uiWindowId = win.id;
+    await setStorage({ isUiOpen: true });
+    return { toggled: true, action: 'created' };
 }
+
+// ウィンドウが閉じられたことを検知する
+chrome.windows.onRemoved.addListener((windowId) => {
+    if (windowId === uiWindowId) {
+        uiWindowId = null;
+        setStorage({ isUiOpen: false });
+    }
+});
+
+// ウィンドウが閉じられたことを検知する
+chrome.windows.onRemoved.addListener((windowId) => {
+    if (windowId === uiWindowId) {
+        uiWindowId = null;
+        setStorage({ isUiOpen: false });
+    }
+});
 
 async function openOrSwitchTab(payload) {
     const targetUrl = typeof payload?.url === 'string' ? payload.url.trim() : '';
@@ -880,8 +910,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 if (chrome.action?.onClicked) {
     chrome.action.onClicked.addListener(() => {
-        void toggleUiInActiveTab().catch((error) => {
-            console.error('ClipShelf action toggle failed:', error);
+        void toggleUiWindow().catch((error) => {
+            console.error('ClipShelf window toggle failed:', error);
         });
     });
 }

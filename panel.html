@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ClipShelf</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(155deg, #fff8ec 0%, #eef5ff 52%, #f4fff9 100%);
+            font-family: "Avenir Next", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        #app-container {
+            flex: 1;
+            padding: 8px;
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="app-container">
+        <p>読み込み中...</p>
+    </div>
+    <script src="panel.js"></script>
+</body>
+</html>
