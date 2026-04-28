@@ -77,7 +77,7 @@ function openLightbox(screenshot) {
     actions.className = 'lightbox-actions';
 
     // リンクを開くボタン
-    const openLinkBtn = createButton(getMessage('uiButtonOpenLink'), 'btn lightbox-open-link', async (e) => {
+    const openLinkBtn = createButton(getMessage('uiButtonOpenLink'), 'btn lightbox-open-link', (e) => {
         e.stopPropagation();
         if (screenshot.pageUrl) {
             // 背景スクリプトの既存の openOrSwitchTab 機能を呼び出す
@@ -85,6 +85,13 @@ function openLightbox(screenshot) {
                 action: ACTION_TYPES.OPEN_OR_SWITCH_TAB,
                 url: screenshot.pageUrl
             });
+
+            // ブラウザのタブ移動完了を待ってから、独立ウィンドウを再度フォーカス（前面へ）する
+            setTimeout(() => {
+                chrome.windows.getCurrent((win) => {
+                    chrome.windows.update(win.id, { focused: true });
+                });
+            },1); // 0.15秒後に前面へ戻す
         }
     });
     openLinkBtn.title = getMessage('uiButtonOpenLink');
