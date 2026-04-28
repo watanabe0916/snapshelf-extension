@@ -124,23 +124,6 @@ function openLightbox(screenshot) {
 }
 
 function renderNoActiveGroupState(container, model) {
-    const headerActions = document.createElement('div');
-    headerActions.style.cssText = 'display: flex; justify-content: flex-end; margin-bottom: 0px;';
-
-    const supportLink = document.createElement('a');
-    supportLink.href = '#'; // TODO: 後でここにKo-fiのURL（例: 'https://ko-fi.com/xxxx'）を入れます
-    supportLink.target = '_blank';
-    supportLink.className = 'btn secondary';
-    supportLink.style.cssText = 'text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 6px 6px; font-size: 10px;';
-    
-    supportLink.innerHTML = `
-        <span class="material-symbols-rounded" style="font-size: 18px;">local_cafe</span>
-        ${getMessage('uiButtonSupport')}
-    `;
-    
-    headerActions.appendChild(supportLink);
-    container.appendChild(headerActions);
-    
     const createSection = document.createElement('section');
     createSection.className = 'section';
     createSection.innerHTML = `<h3 class="section-title"><span class="material-symbols-rounded" style="font-size:23px">add_circle</span>${getMessage('uiCreateNewShelfTitle')}</h3>`;
@@ -383,6 +366,8 @@ function initSettings() {
     document.getElementById('labelKeyTab').textContent = getMessage('uiSettingsKeyTab') + ': ';
     document.getElementById('labelPromptName').textContent = getMessage('uiSettingsPromptName');
     btnSave.textContent = getMessage('uiButtonSaveSettings');
+
+    document.getElementById('supportLabel').textContent = getMessage('uiButtonSupport');
 
     settingsButton.addEventListener('click', () => {
         if (settingsPanel.style.display === 'none') {

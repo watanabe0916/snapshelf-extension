@@ -1,35 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
 
-<body>
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <button id="settingsButton" class="btn secondary"
-            style="display: inline-flex; align-items: center; padding: 6px;">
-            <span class="material-symbols-rounded">settings</span>
-        </button>
-
-    </div>
-
-    <div id="settingsPanel" style="display: none; padding: 10px; border: 1px solid #ccc; margin-bottom: 10px;">
-        <h3 id="settingsTitle"></h3>
-        <div style="margin-bottom: 8px;">
-            <label id="labelKeyImage"></label>
-            <input type="text" id="inputKeySaveImage" maxlength="1" style="width: 30px; text-align: center;">
-        </div>
-        <div style="margin-bottom: 8px;">
-            <label id="labelKeyTab"></label>
-            <input type="text" id="inputKeySaveTab" maxlength="1" style="width: 30px; text-align: center;">
-        </div>
-        <div style="margin-bottom: 8px;">
-            <label>
-                <input type="checkbox" id="inputPromptForName">
-                <span id="labelPromptName"></span>
-            </label>
-        </div>
-        <button id="saveSettingsBtn" class="btn primary"></button>
-    </div>
-</body>
-
 <head>
     <meta charset="UTF-8">
     <title>ClipShelf</title>
@@ -483,7 +454,37 @@
 </head>
 
 <body>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 0 5px;">
+        <button id="settingsButton" class="btn secondary" style="display: inline-flex; align-items: center; padding: 6px; cursor: pointer;">
+            <span class="material-symbols-rounded">settings</span>
+        </button>
+        <a id="supportLinkBtn" href="https://ko-fi.com/tkgTech" target="_blank" class="btn secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px; padding: 6px 8px; font-size: 11px; cursor: pointer;">
+            <span class="material-symbols-rounded" style="font-size: 16px;">local_cafe</span>
+            <span id="supportLabel">Support</span>
+        </a>
+    </div>
+
+    <div id="settingsPanel" style="display: none; padding: 10px; border: 1px solid #ccc; margin-bottom: 6px; border-radius: 8px; background: #f9f9f9;">
+        <h3 id="settingsTitle" style="margin-top:0"></h3>
+        <div style="margin-bottom: 8px;">
+            <label id="labelKeyImage"></label>
+            <input type="text" id="inputKeySaveImage" maxlength="1" style="width: 30px; text-align: center;">
+        </div>
+        <div style="margin-bottom: 8px;">
+            <label id="labelKeyTab"></label>
+            <input type="text" id="inputKeySaveTab" maxlength="1" style="width: 30px; text-align: center;">
+        </div>
+        <div style="margin-bottom: 8px;">
+            <label>
+                <input type="checkbox" id="inputPromptForName">
+                <span id="labelPromptName"></span>
+            </label>
+        </div>
+        <button id="saveSettingsBtn" class="btn primary" style="width:100%"></button>
+    </div>
+
     <div id="app-container"></div>
+
     <script src="panel.js"></script>
 </body>
 
