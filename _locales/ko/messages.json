@@ -130,5 +130,17 @@
     },
     "uiButtonSaveSettings": {
         "message": "저장"
+    },
+    "uiSettingsThumbSize": {
+        "message": "썸네일 크기"
+    },
+    "uiThumbSizeLarge": {
+        "message": "크게"
+    },
+    "uiThumbSizeMedium": {
+        "message": "보통"
+    },
+    "uiThumbSizeSmall": {
+        "message": "작게"
     }
 }

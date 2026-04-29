@@ -450,37 +450,93 @@
             color: #FFF;
             transform: scale(1.05);
         }
+
+        /* サムネイルサイズ設定 (Mediumはデフォルトの.thumb-gridを適用) */
+        .thumb-grid.size-small {
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+        }
+
+        .thumb-grid.size-small .thumb-item img {
+            height: 60px;
+        }
+
+        .thumb-grid.size-small .thumb-meta {
+            font-size: 9px;
+            padding: 4px 6px;
+        }
+
+        .thumb-grid.size-large {
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .thumb-grid.size-large .thumb-item img {
+            height: 140px;
+        }
+
+        .thumb-grid.size-large .thumb-meta {
+            font-size: 12px;
+            padding: 8px 10px;
+        }
+
+        #settingsPanel::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #settingsPanel::-webkit-scrollbar-thumb {
+            background: #D1D5DB;
+            border-radius: 10px;
+        }
     </style>
 </head>
 
 <body>
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 0 5px;">
-        <button id="settingsButton" class="btn secondary" style="display: inline-flex; align-items: center; padding: 6px; cursor: pointer;">
+    <div
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 0 5px;">
+        <button id="settingsButton" class="btn secondary"
+            style="display: inline-flex; align-items: center; padding: 6px; cursor: pointer;">
             <span class="material-symbols-rounded">settings</span>
         </button>
-        <a id="supportLinkBtn" href="https://ko-fi.com/W7W21YN57S" target="_blank" class="btn secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px; padding: 6px 8px; font-size: 11px; cursor: pointer;">
+        <a id="supportLinkBtn" href="https://ko-fi.com/W7W21YN57S" target="_blank" class="btn secondary"
+            style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px; padding: 6px 8px; font-size: 11px; cursor: pointer;">
             <span class="material-symbols-rounded" style="font-size: 16px;">local_cafe</span>
             <span id="supportLabel">Support</span>
         </a>
     </div>
 
-    <div id="settingsPanel" style="display: none; padding: 10px; border: 1px solid #ccc; margin-bottom: 6px; border-radius: 8px; background: #f9f9f9;">
+    <div id="settingsPanel"
+        style="display: none; padding: 10px; border: 1px solid #ccc; margin-bottom: 6px; border-radius: 8px; background: #f9f9f9; overflow-y: auto;">
         <h3 id="settingsTitle" style="margin-top:0"></h3>
-        <div style="margin-bottom: 8px;">
+        <div style="margin-bottom: 6px;">
             <label id="labelKeyImage"></label>
             <input type="text" id="inputKeySaveImage" maxlength="1" style="width: 30px; text-align: center;">
         </div>
-        <div style="margin-bottom: 8px;">
+
+        <div style="margin-bottom: 6px;">
             <label id="labelKeyTab"></label>
             <input type="text" id="inputKeySaveTab" maxlength="1" style="width: 30px; text-align: center;">
         </div>
-        <div style="margin-bottom: 8px;">
+
+        <div style="margin-bottom: 6px;">
             <label>
                 <input type="checkbox" id="inputPromptForName">
                 <span id="labelPromptName"></span>
             </label>
         </div>
-        <button id="saveSettingsBtn" class="btn primary" style="width:100%"></button>
+
+        <div style="margin-bottom: 6px;">
+            <label id="labelThumbSize" style="display: block; margin-bottom: 4px;"></label>
+            <div style="display: flex; gap: 12px;">
+                <label><input type="radio" name="thumbSize" value="small"> <span id="labelSizeSmall"></span></label>
+                <label><input type="radio" name="thumbSize" value="medium"> <span id="labelSizeMedium"></span></label>
+                <label><input type="radio" name="thumbSize" value="large"> <span id="labelSizeLarge"></span></label>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <button id="saveSettingsBtn" class="btn primary" style="width:80%;"></button>
+        </div>
     </div>
 
     <div id="app-container"></div>

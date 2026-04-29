@@ -16,7 +16,8 @@ const uiState = {
     model: null,
     editingGroupId: null,
     lastError: '',
-    lightboxUrl: null
+    lightboxUrl: null,
+    thumbSize: 'medium'
 };
 
 window.addEventListener('beforeunload', () => {
@@ -273,36 +274,53 @@ function renderActiveGroupState(container, model) {
         const scroll = document.createElement('div');
         scroll.className = 'thumb-scroll';
         const grid = document.createElement('div');
-        grid.className = 'thumb-grid';
+        grid.className = `thumb-grid size-${uiState.thumbSize}`;
 
-        model.screenshots.forEach(screenshot => {
-            const item = document.createElement('div');
-            item.className = 'thumb-item';
+        const CHUNK_SIZE = 15; // 1回に描画する枚数
+        let currentIndex = 0;
 
-            const img = document.createElement('img');
-            img.src = screenshot.imageDataUrl;
-            img.alt = getMessage('uiSavedImageThumbnailAlt');
+        function renderNextChunk() {
+            const chunk = model.screenshots.slice(currentIndex, currentIndex + CHUNK_SIZE);
+            chunk.forEach(screenshot => {
+                const item = document.createElement('div');
+                item.className = 'thumb-item';
 
-            const delBtn = document.createElement('button');
-            delBtn.className = 'thumb-delete';
-            delBtn.innerHTML = '<span class="material-symbols-rounded" style="font-size:16px">close</span>';
-            delBtn.title = getMessage('uiDeleteImageTitle');
-            delBtn.addEventListener('click', async (e) => {
-                e.stopPropagation();
-                await sendRuntimeMessage(MESSAGE_TYPES.DELETE_SCREENSHOT, { id: screenshot.id });
-                refreshUi();
+                const img = document.createElement('img');
+                img.loading = 'lazy'; // 画像の遅延読み込み
+                img.src = screenshot.imageDataUrl;
+                img.alt = getMessage('uiSavedImageThumbnailAlt');
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'thumb-delete';
+                delBtn.innerHTML = '<span class="material-symbols-rounded" style="font-size:16px">close</span>';
+                delBtn.title = getMessage('uiDeleteImageTitle');
+                delBtn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    await sendRuntimeMessage(MESSAGE_TYPES.DELETE_SCREENSHOT, { id: screenshot.id });
+                    refreshUi();
+                });
+
+                const meta = document.createElement('span');
+                meta.className = 'thumb-meta';
+                meta.textContent = screenshot.name;
+                meta.title = screenshot.name;
+
+                item.append(img, delBtn, meta);
+                item.addEventListener('click', () => openLightbox(screenshot));
+                grid.appendChild(item);
             });
 
-            const meta = document.createElement('span');
-            meta.className = 'thumb-meta';
-            // 修正箇所: 日時ではなく名前を表示し、文字数が多い時のためにtitle属性を追加
-            meta.textContent = screenshot.name;
-            meta.title = screenshot.name;
+            currentIndex += CHUNK_SIZE;
+            if (currentIndex < model.screenshots.length) {
+                // UIスレッドをブロックしないよう遅延処理
+                requestAnimationFrame(() => {
+                    setTimeout(renderNextChunk, 10);
+                });
+            }
+        }
 
-            item.append(img, delBtn, meta);
-            item.addEventListener('click', () => openLightbox(screenshot));
-            grid.appendChild(item);
-        });
+        renderNextChunk();
+
         scroll.appendChild(grid);
         screenshotsSection.appendChild(scroll);
     }
@@ -338,6 +356,9 @@ function renderUi() {
 async function refreshUi() {
     try {
         uiState.model = await sendRuntimeMessage(MESSAGE_TYPES.GET_UI_MODEL);
+        //ストレージからサイズ設定を取得
+        const items = await new Promise(resolve => chrome.storage.local.get(['thumbSize'], resolve));
+        uiState.thumbSize = items.thumbSize || 'medium';
         uiState.lastError = '';
     } catch (e) {
         uiState.model = null;
@@ -365,16 +386,34 @@ function initSettings() {
     document.getElementById('labelKeyImage').textContent = getMessage('uiSettingsKeyImage') + ': ';
     document.getElementById('labelKeyTab').textContent = getMessage('uiSettingsKeyTab') + ': ';
     document.getElementById('labelPromptName').textContent = getMessage('uiSettingsPromptName');
+
+    const labelThumbSize = document.getElementById('labelThumbSize');
+    if(labelThumbSize) labelThumbSize.textContent = getMessage('uiSettingsThumbSize');
+    const labelSizeLarge = document.getElementById('labelSizeLarge');
+    if(labelSizeLarge) labelSizeLarge.textContent = getMessage('uiThumbSizeLarge');
+    const labelSizeMedium = document.getElementById('labelSizeMedium');
+    if(labelSizeMedium) labelSizeMedium.textContent = getMessage('uiThumbSizeMedium');
+    const labelSizeSmall = document.getElementById('labelSizeSmall');
+    if(labelSizeSmall) labelSizeSmall.textContent = getMessage('uiThumbSizeSmall');
+
     btnSave.textContent = getMessage('uiButtonSaveSettings');
 
     document.getElementById('supportLabel').textContent = getMessage('uiButtonSupport');
 
     settingsButton.addEventListener('click', () => {
         if (settingsPanel.style.display === 'none') {
-            chrome.storage.local.get(['keySaveImage', 'keySaveTab', 'promptForName'], (items) => {
+            chrome.storage.local.get(['keySaveImage', 'keySaveTab', 'promptForName' , 'thumbSize'], (items) => {
                 elKeyImage.value = items.keySaveImage || 's';
                 elKeyTab.value = items.keySaveTab || 'a';
                 elPromptName.checked = !!items.promptForName;
+
+                //ラジオボタンの選択状態を復元
+                const currentSize = items.thumbSize || 'medium';
+                const radioSizes = document.getElementsByName('thumbSize');
+                Array.from(radioSizes).forEach(radio => {
+                    radio.checked = (radio.value === currentSize);
+                });
+
                 settingsPanel.style.display = 'block';
             });
         } else {
@@ -383,13 +422,22 @@ function initSettings() {
     });
 
     btnSave.addEventListener('click', () => {
+        //選択されたラジオボタンの値を取得
+        let selectedSize = 'medium';
+        const radioSizes = document.getElementsByName('thumbSize');
+        Array.from(radioSizes).forEach(radio => {
+            if(radio.checked) selectedSize = radio.value;
+        });
+
         const newSettings = {
             keySaveImage: elKeyImage.value.toLowerCase() || 's',
             keySaveTab: elKeyTab.value.toLowerCase() || 'a',
-            promptForName: elPromptName.checked
+            promptForName: elPromptName.checked,
+            thumbSize: selectedSize
         };
         chrome.storage.local.set(newSettings, () => {
             settingsPanel.style.display = 'none';
+            refreshUi();
         });
     });
 }

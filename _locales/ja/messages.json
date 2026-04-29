@@ -131,6 +131,19 @@
     "uiButtonSaveSettings": {
         "message": "保存"
     },
-    "uiPromptEnterName": { 
-        "message": "保存する画像の名前を入力してください:" }
+    "uiPromptEnterName": {
+        "message": "保存する画像の名前を入力してください:"
+    },
+    "uiSettingsThumbSize": {
+        "message": "サムネイルの表示サイズ"
+    },
+    "uiThumbSizeLarge": {
+        "message": "大"
+    },
+    "uiThumbSizeMedium": {
+        "message": "中"
+    },
+    "uiThumbSizeSmall": {
+        "message": "小"
+    }
 }

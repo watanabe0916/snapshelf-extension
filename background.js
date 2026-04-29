@@ -8,7 +8,8 @@ const STORAGE_DEFAULTS = {
     groupsMetadata: {},
     keySaveImage: 's',
     keySaveTab: 'a',
-    promptForName: false
+    promptForName: false,
+    thumbSize: 'medium'
 };
 
 const MESSAGE_TYPES = {

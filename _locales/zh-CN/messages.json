@@ -130,5 +130,17 @@
     },
     "uiButtonSaveSettings": {
         "message": "保存"
+    },
+    "uiSettingsThumbSize": {
+        "message": "缩略图大小"
+    },
+    "uiThumbSizeLarge": {
+        "message": "大"
+    },
+    "uiThumbSizeMedium": {
+        "message": "中"
+    },
+    "uiThumbSizeSmall": {
+        "message": "小"
     }
 }

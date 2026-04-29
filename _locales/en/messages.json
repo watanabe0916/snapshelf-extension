@@ -130,5 +130,17 @@
     },
     "uiButtonSaveSettings": {
         "message": "Save"
+    },
+    "uiSettingsThumbSize": {
+        "message": "Thumbnail Size"
+    },
+    "uiThumbSizeLarge": {
+        "message": "Large"
+    },
+    "uiThumbSizeMedium": {
+        "message": "Medium"
+    },
+    "uiThumbSizeSmall": {
+        "message": "Small"
     }
 }
