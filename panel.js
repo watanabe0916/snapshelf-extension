@@ -399,6 +399,7 @@ function initSettings() {
     btnSave.textContent = getMessage('uiButtonSaveSettings');
 
     document.getElementById('supportLabel').textContent = getMessage('uiButtonSupport');
+    document.getElementById('labelBugReport').textContent = chrome.i18n.getMessage('uiBugReport') || 'Bug Report';
 
     settingsButton.addEventListener('click', () => {
         if (settingsPanel.style.display === 'none') {

@@ -142,5 +142,8 @@
     },
     "uiThumbSizeSmall": {
         "message": "Klein"
+    },
+    "uiBugReport": {
+        "message": "Fehler melden"
     }
 }

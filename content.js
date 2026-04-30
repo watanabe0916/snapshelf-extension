@@ -346,10 +346,12 @@
 
     function handlePointerMove(event) {
         if (!hasActiveShelfId() || !selectionState.isDragging) return;
-        /*if ((event.buttons & 1) === 0) {
-            finalizeSelection();
+        
+        if (event.pointerType === 'mouse' && (event.buttons & 1) === 0) {
+            finalizeSelection(event.clientX, event.clientY);
             return;
-        }*/
+        }
+
         event.preventDefault();
         event.stopPropagation();
         updateOverlayRect(event.clientX, event.clientY);

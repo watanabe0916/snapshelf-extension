@@ -142,5 +142,8 @@
     },
     "uiThumbSizeSmall": {
         "message": "小"
+    },
+    "uiBugReport": {
+        "message": "回報錯誤"
     }
 }

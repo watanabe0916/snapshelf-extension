@@ -145,5 +145,8 @@
     },
     "uiThumbSizeSmall": {
         "message": "小"
+    },
+    "uiBugReport": {
+        "message": "不具合を報告"
     }
 }

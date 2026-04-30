@@ -494,15 +494,27 @@
 <body>
     <div
         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 0 5px;">
+        <!-- 左側：設定ボタン -->
         <button id="settingsButton" class="btn secondary"
             style="display: inline-flex; align-items: center; padding: 6px; cursor: pointer;">
             <span class="material-symbols-rounded">settings</span>
         </button>
-        <a id="supportLinkBtn" href="https://ko-fi.com/W7W21YN57S" target="_blank" class="btn secondary"
-            style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px; padding: 6px 8px; font-size: 11px; cursor: pointer;">
-            <span class="material-symbols-rounded" style="font-size: 16px;">local_cafe</span>
-            <span id="supportLabel">Support</span>
-        </a>
+
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <!-- バグ報告リンク -->
+            <a id="bugReportLinkBtn" href="https://forms.gle/ufDipMyMcrsbysA69" target="_blank" class="btn secondary"
+                style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px; padding: 6px 8px; font-size: 11px; cursor: pointer; color: #555;">
+                <span class="material-symbols-rounded" style="font-size: 16px;">bug_report</span>
+                <span id="labelBugReport">Bug Report</span>
+            </a>
+
+            <!-- Ko-fiリンク -->
+            <a id="supportLinkBtn" href="https://ko-fi.com/W7W21YN57S" target="_blank" class="btn secondary"
+                style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px; padding: 6px 8px; font-size: 11px; cursor: pointer;">
+                <span class="material-symbols-rounded" style="font-size: 16px;">local_cafe</span>
+                <span id="supportLabel">Support</span>
+            </a>
+        </div>
     </div>
 
     <div id="settingsPanel"
