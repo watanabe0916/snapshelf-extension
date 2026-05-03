@@ -187,8 +187,15 @@ function createScreenshotItem(screenshot) {
     delBtn.title = getMessage('uiDeleteImageTitle');
     delBtn.addEventListener('click', async (e) => {
         e.stopPropagation();
-        await sendRuntimeMessage(MESSAGE_TYPES.DELETE_SCREENSHOT, { id: screenshot.id });
-        refreshUi();
+        delBtn.disabled = true;
+        try {
+            await sendRuntimeMessage(MESSAGE_TYPES.DELETE_SCREENSHOT, { id: screenshot.id });
+            applyDeletedScreenshot(screenshot, item);
+        } catch (error) {
+            delBtn.disabled = false;
+            uiState.lastError = error.message;
+            renderUi();
+        }
     });
 
     const meta = document.createElement('span');
@@ -209,6 +216,42 @@ function appendScreenshotsToGrid(grid, screenshots) {
 
 function prependScreenshotToGrid(grid, screenshot) {
     grid.prepend(createScreenshotItem(screenshot));
+}
+
+function applyDeletedScreenshot(screenshot, itemElement) {
+    const paging = uiState.screenshotPaging;
+    const screenshotId = Number(screenshot?.id);
+    const itemIndex = paging.items.findIndex((item) => Number(item.id) === screenshotId);
+
+    if (itemIndex !== -1) {
+        paging.items.splice(itemIndex, 1);
+    }
+
+    paging.totalCount = Math.max(0, paging.totalCount - 1);
+    paging.offset = Math.max(0, paging.offset - 1);
+
+    if (uiState.model?.activeGroup) {
+        uiState.model.activeGroup.count = Math.max(0, (uiState.model.activeGroup.count || 0) - 1);
+    }
+
+    if (Array.isArray(uiState.model?.groups)) {
+        uiState.model.groups = uiState.model.groups.map((group) => (
+            group.id === screenshot.groupId ? { ...group, count: Math.max(0, (group.count || 0) - 1) } : group
+        ));
+    }
+
+    itemElement?.remove();
+    renderActiveGroupTitleOnly();
+
+    const activeSection = document.querySelector('.screenshots-section');
+    if (uiState.model?.activeGroup?.count === 0) {
+        renderUi();
+        return;
+    }
+
+    if (activeSection) {
+        scheduleNextScreenshotPage(activeSection);
+    }
 }
 
 function updateScreenshotLoadStatus(section) {
